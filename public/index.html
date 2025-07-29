@@ -60,7 +60,7 @@
     form.addEventListener("submit", function (e) {
       const geselecteerd = document.querySelectorAll('input[name="deelnemers"]:checked');
       if (geselecteerd.length > 4) {
-        errorMessage.textContent = "Je mag maximaal 10 deelnemers selecteren.";
+        errorMessage.textContent = "Je mag maximaal 4 deelnemers selecteren.";
         e.preventDefault();
       } else if (geselecteerd.length === 0) {
         errorMessage.textContent = "Selecteer ten minste 1 deelnemer.";
