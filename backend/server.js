@@ -1,64 +1,42 @@
 import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import pg from 'pg';
+import pool from './db.js';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
+
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// PostgreSQL client setup
-const { Pool } = pg;
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false } // verplicht op Render
-});
-
-// Middleware
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Init tabel als die nog niet bestaat
-const initDB = async () => {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS inzendingen (
-      id SERIAL PRIMARY KEY,
-      voornaam TEXT NOT NULL,
-      achternaam TEXT NOT NULL,
-      email TEXT NOT NULL,
-      deelnemers TEXT NOT NULL,
-      tijdstip TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-  `);
-};
-
-initDB();
-
-// POST route
+// POST /submit
 app.post('/submit', async (req, res) => {
-  const { voornaam, achternaam, email } = req.body;
-  let deelnemers = req.body.deelnemers;
-
-  if (!Array.isArray(deelnemers)) {
-    deelnemers = [deelnemers];
-  }
-
-  const deelnemersStr = deelnemers.join('; ');
-
+  const { voornaam, achternaam, email, selectie } = req.body;
+  const deelnemers = selectie.join(', ');
   try {
     await pool.query(
-      'INSERT INTO inzendingen (voornaam, achternaam, email, deelnemers) VALUES ($1, $2, $3, $4)',
-      [voornaam, achternaam, email, deelnemersStr]
+      `INSERT INTO inzendingen (voornaam, achternaam, email, deelnemers, tijdstip)
+       VALUES ($1, $2, $3, $4, NOW())`,
+      [voornaam, achternaam, email, deelnemers]
     );
-    res.send('<h2>Bedankt! Je inzending is opgeslagen.</h2>');
+    res.status(200).json({ message: 'Inzending opgeslagen' });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Er is een fout opgetreden bij het opslaan.');
+    res.status(500).json({ error: 'Databasefout' });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server draait op http://localhost:${PORT}`);
+// GET /inzendingen
+app.fetch('https://tourmanager-submit-form.onrender.com/inzendingen', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM inzendingen ORDER BY tijdstip DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Kan inzendingen niet ophalen' });
+  }
 });
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => console.log(`Server draait op poort ${PORT}`));
