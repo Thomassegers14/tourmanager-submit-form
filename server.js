@@ -1,40 +1,41 @@
-// server.js
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const app = express();
-const PORT = 3000;
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-// Middleware
+// nodig voor ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const csvPath = path.join(__dirname, 'inzendingen.csv');
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public')); // voor de HTML
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Zorg dat CSV-bestand bestaat met headers
-const csvPath = path.join(__dirname, 'inzendingen.csv');
+// Init CSV bestand
 if (!fs.existsSync(csvPath)) {
   fs.writeFileSync(csvPath, 'Voornaam,Achternaam,E-mail,Deelnemers\n');
 }
 
-// POST route
+// Ontvang formulier
 app.post('/submit', (req, res) => {
-  const { voornaam, achternaam, email, deelnemers } = req.body;
+  const { voornaam, achternaam, email } = req.body;
+  let deelnemers = req.body.deelnemers;
 
-  const selectie = Array.isArray(deelnemers) ? deelnemers.join('; ') : deelnemers;
-  const record = `${voornaam},${achternaam},${email},"${selectie}"\n`;
+  if (!Array.isArray(deelnemers)) {
+    deelnemers = [deelnemers]; // voor 1 selectie
+  }
 
-  fs.appendFile(csvPath, record, (err) => {
-    if (err) {
-      console.error('Fout bij opslaan:', err);
-      return res.status(500).send('Er is iets misgegaan.');
-    }
-    res.send('<h2>Dank je! Je selectie is ontvangen.</h2>');
-  });
+  const rij = `${voornaam},${achternaam},${email},"${deelnemers.join('; ')}"\n`;
+  fs.appendFileSync(csvPath, rij);
+  res.send('<h2>Bedankt! Je inzending is opgeslagen.</h2>');
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server draait op http://localhost:${PORT}`);
 });
