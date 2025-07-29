@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: tourmanager-submit-form-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: PORT
+        value: 3001
+
+  - type: web
+    name: tourmanager-submit-form-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /submit
+        destination: https://tourmanager-submit-form.onrender.com
+      - type: rewrite
+        source: /inzendingen
+        destination: https://tourmanager-submit-form.onrender.com
