@@ -1,39 +1,62 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import pg from 'pg';
+import dotenv from 'dotenv';
 
-// nodig voor ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
-const csvPath = path.join(__dirname, 'inzendingen.csv');
 
+// PostgreSQL client setup
+const { Pool } = pg;
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false } // verplicht op Render
+});
+
+// Middleware
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
-// Init CSV bestand
-if (!fs.existsSync(csvPath)) {
-  fs.writeFileSync(csvPath, 'Voornaam,Achternaam,E-mail,Deelnemers\n');
-}
+// Init tabel als die nog niet bestaat
+const initDB = async () => {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS inzendingen (
+      id SERIAL PRIMARY KEY,
+      voornaam TEXT NOT NULL,
+      achternaam TEXT NOT NULL,
+      email TEXT NOT NULL,
+      deelnemers TEXT NOT NULL,
+      tijdstip TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+};
 
-// Ontvang formulier
-app.post('/submit', (req, res) => {
+initDB();
+
+// POST route
+app.post('/submit', async (req, res) => {
   const { voornaam, achternaam, email } = req.body;
   let deelnemers = req.body.deelnemers;
 
   if (!Array.isArray(deelnemers)) {
-    deelnemers = [deelnemers]; // voor 1 selectie
+    deelnemers = [deelnemers];
   }
 
-  const rij = `${voornaam},${achternaam},${email},"${deelnemers.join('; ')}"\n`;
-  fs.appendFileSync(csvPath, rij);
-  res.send('<h2>Bedankt! Je inzending is opgeslagen.</h2>');
+  const deelnemersStr = deelnemers.join('; ');
+
+  try {
+    await pool.query(
+      'INSERT INTO inzendingen (voornaam, achternaam, email, deelnemers) VALUES ($1, $2, $3, $4)',
+      [voornaam, achternaam, email, deelnemersStr]
+    );
+    res.send('<h2>Bedankt! Je inzending is opgeslagen.</h2>');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Er is een fout opgetreden bij het opslaan.');
+  }
 });
 
 app.listen(PORT, () => {
