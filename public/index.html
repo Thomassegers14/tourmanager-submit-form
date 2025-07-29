@@ -5,15 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Deelnemerselectie</title>
   <style>
-    body { font-family: sans-serif; max-width: 800px; margin: auto; padding: 20px; }
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; }
     label { display: block; margin: 10px 0; }
     input[type="text"], input[type="email"] { width: 100%; padding: 8px; }
     .checkboxes label { margin: 4px 0; }
     .error { color: red; }
     button { padding: 10px 15px; margin-top: 15px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 40px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
   </style>
 </head>
 <body>
@@ -56,32 +53,13 @@
     <button type="submit">Verstuur selectie</button>
   </form>
 
-  <hr>
-
-  <h2>Inzendingen</h2>
-  <button onclick="downloadCSV()">Download als CSV</button>
-  <table id="inzendingenTabel">
-    <thead>
-      <tr>
-        <th>Voornaam</th>
-        <th>Achternaam</th>
-        <th>E-mail</th>
-        <th>Deelnemers</th>
-        <th>Tijdstip</th>
-      </tr>
-    </thead>
-    <tbody id="tabelBody">
-    </tbody>
-  </table>
-
   <script>
-    // Validatie formulier
     const form = document.getElementById("selectieForm");
     const errorMessage = document.getElementById("errorMessage");
 
     form.addEventListener("submit", function (e) {
       const geselecteerd = document.querySelectorAll('input[name="deelnemers"]:checked');
-      if (geselecteerd.length > 10) {
+      if (geselecteerd.length > 4) {
         errorMessage.textContent = "Je mag maximaal 10 deelnemers selecteren.";
         e.preventDefault();
       } else if (geselecteerd.length === 0) {
@@ -91,44 +69,6 @@
         errorMessage.textContent = "";
       }
     });
-
-    // Ophalen inzendingen en tonen in tabel
-    async function haalInzendingenOp() {
-      const res = await fetch('/inzendingen');
-      const data = await res.json();
-      const tbody = document.getElementById('tabelBody');
-      tbody.innerHTML = '';
-      data.forEach(rij => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${rij.voornaam}</td>
-          <td>${rij.achternaam}</td>
-          <td>${rij.email}</td>
-          <td>${rij.deelnemers}</td>
-          <td>${new Date(rij.tijdstip).toLocaleString()}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // Download CSV
-    async function downloadCSV() {
-      const res = await fetch('/inzendingen');
-      const data = await res.json();
-      const csv = [
-        ['Voornaam', 'Achternaam', 'E-mail', 'Deelnemers', 'Tijdstip'],
-        ...data.map(r => [r.voornaam, r.achternaam, r.email, r.deelnemers, r.tijdstip])
-      ].map(row => row.map(item => `"${item}"`).join(',')).join('\n');
-
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'inzendingen.csv';
-      link.click();
-    }
-
-    // Laad gegevens bij opstart
-    haalInzendingenOp();
   </script>
 </body>
 </html>
