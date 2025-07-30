@@ -27,6 +27,9 @@
             beschikbaar</p>
           <button :disabled="!formValid" @click="submitForm">Verzend selectie</button>
         </div>
+        <p v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''" class="warning">
+          Vul alle velden in: voornaam, achternaam en e-mail zijn verplicht.
+        </p>
         <p v-if="form.selectie.length !== maxRenners" class="warning" style="text-align: right;">
           Je moet exact {{ maxRenners }} renners selecteren.
         </p>
@@ -94,7 +97,11 @@ const groupedRenners = computed(() => {
 const progressPercentage = computed(() => Math.min((totalPoints.value / maxPoints) * 100, 100))
 
 const formValid = computed(() =>
-  form.value.selectie.length === maxRenners && totalPoints.value <= maxPoints
+  form.value.voornaam.trim() !== '' &&
+  form.value.achternaam.trim() !== '' &&
+  form.value.email.trim() !== '' &&
+  form.value.selectie.length === maxRenners &&
+  totalPoints.value <= maxPoints
 )
 
 const checkboxDisabled = (renner) => {
@@ -119,6 +126,7 @@ const submitForm = async () => {
   const selected = renners.filter(r =>
     form.value.selectie.includes(r.rider_id)
   )
+
   const payload = {
     voornaam: form.value.voornaam,
     achternaam: form.value.achternaam,
