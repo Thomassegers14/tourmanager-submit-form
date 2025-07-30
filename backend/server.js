@@ -12,9 +12,15 @@ app.use(express.urlencoded({ extended: true }));
 
 // POST /submit
 app.post('/submit', async (req, res) => {
-  const { voornaam, achternaam, email, selectie } = req.body;
-  const rider_ids = req.body.selectie.map(r => r.rider_id);
-  const rider_names = req.body.selectie.map(r => r.rider_name);
+  const { voornaam, achternaam, email } = req.body;
+  const selectie = req.body.selectie
+
+  if (!Array.isArray(selectie)) {
+    return res.status(400).send('Ongeldige selectie')
+  }
+
+  const rider_ids = selectie.map(r => r.rider_id)
+  const rider_names = selectie.map(r => r.rider_name)
 
   try {
     await pool.query(
