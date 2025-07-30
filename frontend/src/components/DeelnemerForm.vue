@@ -27,7 +27,8 @@
             beschikbaar</p>
           <button :disabled="!formValid" @click="submitForm">Verzend selectie</button>
         </div>
-        <p v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''" class="warning">
+        <p v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''"
+          class="warning">
           Vul alle velden in: voornaam, achternaam en e-mail zijn verplicht.
         </p>
         <p v-if="form.selectie.length !== maxRenners" class="warning" style="text-align: right;">
@@ -131,8 +132,10 @@ const submitForm = async () => {
     voornaam: form.value.voornaam,
     achternaam: form.value.achternaam,
     email: form.value.email,
-    rider_ids: selected.map(r => r.rider_id),
-    rider_names: selected.map(r => r.rider_name)
+    selectie: selectedRiders.value.map(r => ({
+      rider_id: r.rider_id,
+      rider_name: r.rider_name
+    }))
   }
 
   try {
