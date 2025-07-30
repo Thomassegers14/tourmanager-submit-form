@@ -22,6 +22,8 @@ app.post('/submit', async (req, res) => {
   const rider_ids = selectie.map(r => r.rider_id)
   const rider_names = selectie.map(r => r.rider_name)
 
+  console.log('Geselecteerde renners:', rider_ids, rider_names)
+
   try {
     await pool.query(
       `INSERT INTO inzendingen (voornaam, achternaam, email, rider_ids, rider_names, tijdstip)
