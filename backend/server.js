@@ -12,17 +12,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // POST /submit
 app.post('/submit', async (req, res) => {
-  const { voornaam, achternaam, email } = req.body;
-  const selectie = req.body.selectie
+  console.log('Ontvangen body:', req.body);
+
+  const { voornaam, achternaam, email, selectie } = req.body;
 
   if (!Array.isArray(selectie)) {
-    return res.status(400).send('Ongeldige selectie')
+    return res.status(400).send('Ongeldige selectie');
   }
 
-  const rider_ids = selectie.map(r => r.rider_id)
-  const rider_names = selectie.map(r => r.rider_name)
-
-  console.log('Geselecteerde renners:', rider_ids, rider_names)
+  const rider_ids = selectie.map(r => r.rider_id);
+  const rider_names = selectie.map(r => r.rider_name);
 
   try {
     await pool.query(
@@ -35,7 +34,7 @@ app.post('/submit', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Databasefout' });
   }
-});
+})
 
 // GET /inzendingen
 app.get('https://tourmanager-submit-form.onrender.com/inzendingen', async (req, res) => {
