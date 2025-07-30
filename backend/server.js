@@ -13,12 +13,14 @@ app.use(express.urlencoded({ extended: true }));
 // POST /submit
 app.post('/submit', async (req, res) => {
   const { voornaam, achternaam, email, selectie } = req.body;
-  const deelnemers = selectie.join(', ');
+  const rider_ids = req.body.selectie.map(r => r.rider_id);
+  const rider_names = req.body.selectie.map(r => r.rider_name);
+
   try {
     await pool.query(
-      `INSERT INTO inzendingen (voornaam, achternaam, email, deelnemers, tijdstip)
-       VALUES ($1, $2, $3, $4, NOW())`,
-      [voornaam, achternaam, email, deelnemers]
+      `INSERT INTO inzendingen (voornaam, achternaam, email, rider_ids, rider_names, tijdstip)
+       VALUES ($1, $2, $3, $4, $5, NOW())`,
+      [voornaam, achternaam, email, rider_ids, rider_names]
     );
     res.status(200).json({ message: 'Inzending opgeslagen' });
   } catch (err) {
