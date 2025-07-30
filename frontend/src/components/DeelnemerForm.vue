@@ -25,7 +25,7 @@
           <p><strong>{{ form.selectie.length }}</strong> / {{ maxRenners }} renners geselecteerd</p>
           <p><strong>{{ totalPoints }}</strong> / {{ maxPoints }} punten gebruikt – Nog {{ maxPoints - totalPoints }}
             beschikbaar</p>
-          <button :disabled="!formValid" @click="submitForm">Verzend selectie</button>
+          <button :disabled="!formValid">Verzend selectie</button>
         </div>
         <p v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''"
           class="warning">
