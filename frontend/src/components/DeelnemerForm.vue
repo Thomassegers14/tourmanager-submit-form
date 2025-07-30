@@ -36,8 +36,6 @@
       <div class="teams-grid">
         <div v-for="(renners, team) in groupedRenners" :key="team" class="team-column">
           <h3 class="team-name">{{ team }}</h3>
-          <img :src="`https://www.procyclingstats.com/photos/cw/ef/${renners[0].team_id.replace('team/', '')}-bike.jpg`"
-            :alt="team" class="team-logo" />
           <div class="rider-grid">
             <label v-for="renner in renners" :key="renner.rider_id" class="rider-card" :class="{
               selected: form.selectie.includes(renner.rider_id),
@@ -117,17 +115,16 @@ const submitForm = async () => {
     return
   }
 
-  // 🔄 Map rider_ids naar { rider_id, rider_name }
-  const selectieMetNamen = selectedRiders.value.map(r => ({
-    rider_id: r.rider_id,
-    rider_name: r.rider_name
-  }))
-
+  // 👉 Bouw aparte arrays
+  const selected = renners.filter(r =>
+    form.value.selectie.includes(r.rider_id)
+  )
   const payload = {
     voornaam: form.value.voornaam,
     achternaam: form.value.achternaam,
     email: form.value.email,
-    selectie: selectieMetNamen
+    rider_ids: selected.map(r => r.rider_id),
+    rider_names: selected.map(r => r.rider_name)
   }
 
   try {
@@ -151,6 +148,7 @@ const submitForm = async () => {
     alert('Er is iets misgelopen bij het verzenden.')
   }
 }
+
 </script>
 
 <style scoped>
