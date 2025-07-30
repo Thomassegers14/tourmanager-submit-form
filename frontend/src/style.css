@@ -11,6 +11,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --accentColor: blue;
+  --accentColorLight: #e5e5ff;
 }
 
 a {
@@ -60,9 +63,10 @@ button:focus-visible {
 
 #app {
   max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 @media (prefers-color-scheme: light) {
