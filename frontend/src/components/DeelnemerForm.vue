@@ -1,6 +1,6 @@
 <template>
   <div class="form-container">
-    <h2>Inzending Formulier</h2>
+    <h2 class="form-title">Inzending Formulier</h2>
 
     <form @submit.prevent="submitForm">
       <input v-model="form.voornaam" placeholder="Voornaam" required />
@@ -9,7 +9,7 @@
 
       <!-- Sticky Header -->
       <div class="form-header">
-        <h2>Stel je ploeg samen</h2>
+        <h3 class="form-subtitle">Stel je ploeg samen</h3 class="form-subtitle">
         <div class="selected-riders" v-if="selectedRiders.length > 0">
           <div class="points-summary">
             <label>Favorieten punten</label>
@@ -23,15 +23,14 @@
         </div>
         <div class="status-row">
           <p><strong>{{ form.selectie.length }}</strong> / {{ maxRenners }} renners geselecteerd</p>
-          <p><strong>{{ totalPoints }}</strong> / {{ maxPoints }} punten gebruikt – Nog {{ maxPoints - totalPoints }}
-            beschikbaar</p>
+          <p><strong>{{ totalPoints }}</strong> / {{ maxPoints }} punten gebruikt – Nog {{ maxPoints - totalPoints }} beschikbaar</p>
           <button :disabled="!formValid">Verzend selectie</button>
         </div>
         <p v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''"
           class="warning">
           Vul alle velden in: voornaam, achternaam en e-mail zijn verplicht.
         </p>
-        <p v-if="form.selectie.length !== maxRenners" class="warning" style="text-align: right;">
+        <p v-if="form.selectie.length !== maxRenners" class="warning">
           Je moet exact {{ maxRenners }} renners selecteren.
         </p>
       </div>
@@ -179,6 +178,15 @@ const submitForm = async () => {
   z-index: 10;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid #ddd;
+  color: var(--grey);
+}
+
+.form-title {
+  color: var(--dark);
+}
+
+.form-subtitle {
+  color: var(--dark);
 }
 
 .status-row {
@@ -203,6 +211,7 @@ const submitForm = async () => {
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
   font-size: 0.9rem;
+  color: var(--dark);
 }
 
 .teams-grid {
@@ -221,8 +230,9 @@ const submitForm = async () => {
 
 .team-name {
   margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
+  color: var(--dark)
 }
 
 .rider-grid {
@@ -273,6 +283,7 @@ const submitForm = async () => {
 .rider-name {
   font-weight: 500;
   font-size: 0.8rem;
+  color: var(--dark);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -281,7 +292,7 @@ const submitForm = async () => {
 
 .rider-points {
   font-size: 0.85rem;
-  color: #555;
+  color: var(--grey);
   white-space: nowrap;
   margin: 0;
 }
@@ -310,6 +321,7 @@ button:disabled {
 }
 
 .warning {
-  color: red;
+  text-align: center;
+  color: var(--warning);
 }
 </style>

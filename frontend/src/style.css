@@ -14,6 +14,9 @@
 
   --accentColor: blue;
   --accentColorLight: #e5e5ff;
+  --dark: black;
+  --grey: rgb(160, 149, 159);
+  --warning: red;
 }
 
 a {
