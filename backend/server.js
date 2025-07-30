@@ -12,8 +12,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // POST /submit
 app.post('/submit', async (req, res) => {
-  console.log('Ontvangen body:', req.body);
-
   const { voornaam, achternaam, email, selectie } = req.body;
 
   if (!Array.isArray(selectie)) {
