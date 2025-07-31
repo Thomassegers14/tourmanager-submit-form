@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "lucide-vue-next": "^0.535.0",
     "node": "^20.19.4",
     "papa": "^0.0.0",
     "papaparse": "^5.5.3",

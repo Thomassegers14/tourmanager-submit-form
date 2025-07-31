@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-  import DeelnemerForm from './components/DeelnemerForm.vue'
+import DeelnemerForm from './components/DeelnemerForm.vue'
 </script>

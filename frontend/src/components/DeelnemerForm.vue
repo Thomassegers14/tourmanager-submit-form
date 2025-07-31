@@ -1,44 +1,82 @@
 <template>
-  <div class="form-container">
-    <h2 class="form-title">Inzending Formulier</h2>
+  <h1>
+    Wielrenner Selectie
+    <span class="grey">{{ eventName.replaceAll('-',' ') }}</span>
+  </h1>
+  <p class="intro">
+    Maak je perfecte wielrenner selectie van {{ maxRenners }} renners binnen de puntenlimiet van {{ maxPoints }} punten.
+    Kies strategisch uit de beste renners van
+    verschillende teams.
+  </p>
 
-    <form @submit.prevent="submitForm">
-      <input v-model="form.voornaam" placeholder="Voornaam" required />
-      <input v-model="form.achternaam" placeholder="Achternaam" required />
-      <input v-model="form.email" type="email" placeholder="Email" required />
+  <form @submit.prevent="submitForm">
 
-      <!-- Sticky Header -->
+    <div class="form-section">
+      <h2 class="form-section-title">Persoonlijke gegevens</h2>
+      <div class="input-container">
+        <input v-model="form.voornaam" placeholder="Voornaam" required />
+        <input v-model="form.achternaam" placeholder="Achternaam" required />
+        <input v-model="form.email" type="email" placeholder="Email" required />
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2 class="form-section-title">Stel je ploeg samen</h2>
       <div class="form-header">
-        <h3 class="form-subtitle">Stel je ploeg samen</h3 class="form-subtitle">
-        <div class="selected-riders" v-if="selectedRiders.length > 0">
-          <div class="points-summary">
-            <label>Favorieten punten</label>
-            <div class="progress-bar">
-              <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
-            </div>
-          </div>
-          <ul>
-            <li v-for="r in selectedRiders" :key="r.rider_id">{{ r.rider_name }}</li>
-          </ul>
-        </div>
         <div class="status-row">
-          <p><strong>{{ form.selectie.length }}</strong> / {{ maxRenners }} renners geselecteerd</p>
-          <p><strong>{{ totalPoints }}</strong> / {{ maxPoints }} punten gebruikt – Nog {{ maxPoints - totalPoints }} beschikbaar</p>
-          <button :disabled="!formValid">Verzend selectie</button>
+          <div class="status-count">
+            <Users class="icon" />
+            <p>Geselecteerd:</p>
+            <span class="badge badge--secondary">
+              {{ form.selectie.length }} renners
+            </span>
+          </div>
+          <div class="selected-riders" v-if="selectedRiders.length > 0">
+            <ul>
+              <li
+                class="badge badge--secondary"
+                v-for="r in (showAllSelected ? selectedRiders : selectedRiders.slice(0, showSelectedRiders))"
+                :key="r.rider_id"
+              >
+                {{ extractUppercase(r.rider_name) }}
+              </li>
+
+              <li
+                v-if="selectedRiders.length > showSelectedRiders"
+                class="badge badge--primary toggle-badge"
+                @click="showAllSelected = !showAllSelected"
+              >
+                {{ showAllSelected ? 'Toon minder' : '+' + (selectedRiders.length - showSelectedRiders) + ' meer' }}
+              </li>
+            </ul>
+          </div>
+          <button :disabled="!formValid">
+            <Send class="icon icon--white" /> Verzenden
+          </button>
         </div>
-        <p v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''"
-          class="warning">
-          Vul alle velden in: voornaam, achternaam en e-mail zijn verplicht.
-        </p>
-        <p v-if="form.selectie.length !== maxRenners" class="warning">
-          Je moet exact {{ maxRenners }} renners selecteren.
+        <div class="points-summary">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <label>Punten gebruikt</label>
+            <label><strong>{{ totalPoints }}</strong> / {{ maxPoints }} punten</label>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
+          </div>
+        </div>
+        <p class="warning"><span
+            v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''">
+            Vul alle velden in: voornaam, achternaam en e-mail zijn verplicht.
+          </span>
+          <span v-if="form.selectie.length !== maxRenners">
+            Je moet exact {{ maxRenners }} renners selecteren.
+          </span>
         </p>
       </div>
 
       <!-- Grid van teams en renners -->
       <div class="teams-grid">
         <div v-for="(renners, team) in groupedRenners" :key="team" class="team-column">
-          <h3 class="team-name">{{ team }}</h3>
+          <h6 class="team-name">{{ team.replace(/\s*\([^)]*\)/g, "").trim() }}</h6>
           <div class="rider-grid">
             <label v-for="renner in renners" :key="renner.rider_id" class="rider-card" :class="{
               selected: form.selectie.includes(renner.rider_id),
@@ -48,24 +86,34 @@
                 :disabled="checkboxDisabled(renner)" />
               <div class="rider-info">
                 <p class="rider-name">{{ renner.rider_name }}</p>
-                <p class="rider-points">{{ renner.fav_points }} pts</p>
+                <badge class="badge badge--outline">{{ renner.fav_points }}pt</badge>
               </div>
             </label>
 
           </div>
         </div>
       </div>
-    </form>
+    </div>
 
-  </div>
+  </form>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import { Users, Send } from 'lucide-vue-next'
 import renners from '../data/startlist-tour-de-france-2025.json'
+
+const eventName = computed(() => {
+  const first = renners[0]
+  return first?.event_id || 'onbekend'
+})
+
 
 const maxPoints = 10
 const maxRenners = 12
+
+const showSelectedRiders = 5
+const showAllSelected = ref(false)
 
 const form = ref({
   voornaam: '',
@@ -110,6 +158,12 @@ const checkboxDisabled = (renner) => {
   const tooMany = form.value.selectie.length >= maxRenners
 
   return (!alreadySelected && (wouldExceedPoints || tooMany))
+}
+
+const extractUppercase = (name) => {
+  // Match alle woorden in hoofdletters tot het eerste woord met een kleine letter
+  const match = name.match(/^([A-ZÀ-Ü\- ]+)(?= [A-ZÀ-ÿ][a-z])/)
+  return match ? match[1].trim() : name
 }
 
 const submitForm = async () => {
@@ -162,77 +216,113 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
-.form-container {
-  max-width: 1280px;
-  width: 100%;
-  margin: auto;
-  padding: 1rem;
-  box-sizing: border-box;
+.grey {
+  display: block;
+  color: var(--muted-foreground);
 }
-
 .form-header {
   position: sticky;
   top: 0;
-  background-color: white;
+  background-color: var(--background);
   padding: 1rem;
   z-index: 10;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid #ddd;
-  color: var(--grey);
 }
 
-.form-title {
-  color: var(--dark);
+.form-section {
+  border-top: 1px solid var(--border);
+  margin: 6em 0;
 }
 
-.form-subtitle {
-  color: var(--dark);
+.form-section-title {
+  font-size: var(--text-lg);
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 24px 0;
 }
 
 .status-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: space-between;
   gap: 1rem;
+  flex-wrap: nowrap;
+}
+
+.status-count {
+  display: flex; 
+  align-items: center; 
+  gap: 6px;
+}
+
+.selected-riders {
+  flex-grow: 1;     /* neemt alle beschikbare ruimte in */
+  min-width: 0;     /* belangrijk voor overflow wrapping in flex */
+  overflow: hidden; /* voorkom overflow buiten container */
 }
 
 .selected-riders ul {
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.5rem;
+  padding: 9px;
+  margin: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  max-width: 100%;
 }
 
-.selected-riders li {
-  background-color: #eee;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  color: var(--dark);
+.status-row > button,
+.status-row > .status-count {
+  flex-shrink: 0;   /* knop krimpt niet */
+  white-space: nowrap; /* knop tekst blijft op één lijn */
+}
+
+@media (max-width: 768px) {
+  .status-row {
+    flex-direction: column;
+    align-items: flex-start; /* items links uitlijnen */
+    gap: 0.5rem;
+  }
+
+  .selected-riders ul {
+      justify-content: flex-start;
+  }
+
+  .status-row > button {
+    align-self: flex-start; /* links onder */
+    flex-shrink: 0;
+    white-space: nowrap; /* tekst niet breken */
+    width: auto; /* geen volle breedte */
+    display: inline-flex; /* alleen zo breed als nodig */
+  }
 }
 
 .teams-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-top: 1rem;
 }
 
 .team-column {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 6px;
   padding: 0.8rem;
   background: #f9f9f9;
 }
 
 .team-name {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--dark)
+  font-weight: var(--font-weight-light);
+  color: var(--primary);
+  margin: 0.8rem 0;
 }
 
 .rider-grid {
@@ -242,7 +332,7 @@ const submitForm = async () => {
 }
 
 .rider-card {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 6px;
   background-color: white;
   transition: background-color 0.2s, border-color 0.2s;
@@ -255,8 +345,8 @@ const submitForm = async () => {
 }
 
 .rider-card.selected {
-  background-color: var(--accentColorLight);
-  border-color: var(--accentColor);
+  background-color: var(--secondary);
+  border-color: var(--primary);
 }
 
 .rider-card.disabled {
@@ -281,25 +371,16 @@ const submitForm = async () => {
 }
 
 .rider-name {
-  font-weight: 500;
-  font-size: 0.8rem;
-  color: var(--dark);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   margin: 0;
+  font-weight: var(--font-weight-medium);
 }
 
 .rider-points {
-  font-size: 0.85rem;
-  color: var(--grey);
   white-space: nowrap;
   margin: 0;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .points-summary {
@@ -316,12 +397,25 @@ button:disabled {
 
 .progress-fill {
   height: 10px;
-  background-color: var(--accentColor);
+  background-color: var(--accent);
   transition: width 0.3s ease;
 }
 
-.warning {
-  text-align: center;
-  color: var(--warning);
+.icon {
+  width: 18px;
+  color: var(--muted-foreground)
+}
+
+.icon--white {
+  color: white;
+}
+
+.toggle-badge {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-badge:hover {
+  background-color: #e0e0e0;
 }
 </style>
