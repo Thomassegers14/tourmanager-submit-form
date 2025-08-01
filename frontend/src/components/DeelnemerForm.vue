@@ -18,6 +18,11 @@
         <input v-model="form.achternaam" placeholder="Achternaam" required />
         <input v-model="form.email" type="email" placeholder="Email" required />
       </div>
+      <p class="warning"><span
+          v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''">
+          Vul alle velden in: voornaam, achternaam en e-mail zijn verplicht.
+        </span>
+      </p>
     </div>
 
     <div class="form-section">
@@ -33,19 +38,14 @@
           </div>
           <div class="selected-riders" v-if="selectedRiders.length > 0">
             <ul>
-              <li
-                class="badge badge--secondary"
+              <li class="badge badge--secondary"
                 v-for="r in (showAllSelected ? selectedRiders : selectedRiders.slice(0, showSelectedRiders))"
-                :key="r.rider_id"
-              >
+                :key="r.rider_id">
                 {{ extractUppercase(r.rider_name) }}
               </li>
 
-              <li
-                v-if="selectedRiders.length > showSelectedRiders"
-                class="badge badge--primary toggle-badge"
-                @click="showAllSelected = !showAllSelected"
-              >
+              <li v-if="selectedRiders.length > showSelectedRiders" class="badge badge--primary toggle-badge"
+                @click="showAllSelected = !showAllSelected">
                 {{ showAllSelected ? 'Toon minder' : '+' + (selectedRiders.length - showSelectedRiders) + ' meer' }}
               </li>
             </ul>
@@ -54,6 +54,11 @@
             <Send class="icon icon--white" /> Verzenden
           </button>
         </div>
+        <p class="warning">
+          <span v-if="form.selectie.length !== maxRenners">
+            Je moet exact {{ maxRenners }} renners selecteren.
+          </span>
+        </p>
         <div class="points-summary">
           <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
             <label>Punten gebruikt</label>
@@ -63,20 +68,18 @@
             <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
           </div>
         </div>
-        <p class="warning"><span
-            v-if="form.voornaam.trim() === '' || form.achternaam.trim() === '' || form.email.trim() === ''">
-            Vul alle velden in: voornaam, achternaam en e-mail zijn verplicht.
-          </span>
-          <span v-if="form.selectie.length !== maxRenners">
-            Je moet exact {{ maxRenners }} renners selecteren.
-          </span>
-        </p>
       </div>
 
       <!-- Grid van teams en renners -->
       <div class="teams-grid">
         <div v-for="(renners, team) in groupedRenners" :key="team" class="team-column">
-          <h6 class="team-name">{{ team.replace(/\s*\([^)]*\)/g, "").trim() }}</h6>
+          <h6 class="team-name">
+            {{ team.replace(/\s*\([^)]*\)/g, "").trim() }}
+          </h6>
+          <p class="team-stats">
+            <Users class="icon icon-s" />{{ getTeamStats(team).totalRiders }} renners –
+            {{ getTeamStats(team).selectedPoints }}/{{ getTeamStats(team).totalPoints }} pt
+          </p>
           <div class="rider-grid">
             <label v-for="renner in renners" :key="renner.rider_id" class="rider-card" :class="{
               selected: form.selectie.includes(renner.rider_id),
@@ -86,7 +89,7 @@
                 :disabled="checkboxDisabled(renner)" />
               <div class="rider-info">
                 <p class="rider-name">{{ renner.rider_name }}</p>
-                <badge class="badge badge--outline">{{ renner.fav_points }}pt</badge>
+                <span class="badge badge--outline">{{ renner.fav_points }}pt</span>
               </div>
             </label>
 
@@ -99,7 +102,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Users, Send } from 'lucide-vue-next'
 import renners from '../data/startlist-tour-de-france-2025.json'
 
@@ -108,12 +111,26 @@ const eventName = computed(() => {
   return first?.event_id || 'onbekend'
 })
 
-
 const maxPoints = 10
 const maxRenners = 12
 
-const showSelectedRiders = 5
+
+const showSelectedRiders = ref(5)
 const showAllSelected = ref(false)
+
+const handleResize = () => {
+  showSelectedRiders.value = window.innerWidth < 768 ? 3 : 5
+}
+
+onMounted(() => {
+  handleResize()
+  window.addEventListener('resize', handleResize)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
 
 const form = ref({
   voornaam: '',
@@ -141,6 +158,23 @@ const groupedRenners = computed(() => {
   }
   return grouped
 })
+
+const getTeamStats = (teamName) => {
+  const teamRiders = groupedRenners.value[teamName] || []
+
+  const selected = teamRiders.filter(r =>
+    form.value.selectie.includes(r.rider_id)
+  )
+
+  const totalPoints = teamRiders.reduce((sum, r) => sum + Number(r.fav_points), 0)
+  const selectedPoints = selected.reduce((sum, r) => sum + Number(r.fav_points), 0)
+
+  return {
+    totalRiders: teamRiders.length,
+    selectedPoints,
+    totalPoints,
+  }
+}
 
 const progressPercentage = computed(() => Math.min((totalPoints.value / maxPoints) * 100, 100))
 
@@ -322,8 +356,20 @@ const submitForm = async () => {
 .team-name {
   font-weight: var(--font-weight-light);
   color: var(--primary);
-  margin: 0.8rem 0;
+  margin: 0;
 }
+
+.team-stats {
+  font-weight: normal;
+  font-size: var(--text-sm);
+  color: var(--muted-foreground);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
 
 .rider-grid {
   display: grid;
@@ -404,6 +450,10 @@ const submitForm = async () => {
 .icon {
   width: 18px;
   color: var(--muted-foreground)
+}
+
+.icon-s {
+  width: var(--text-sm);
 }
 
 .icon--white {
