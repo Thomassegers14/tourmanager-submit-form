@@ -1,7 +1,7 @@
 <template>
   <h1>
     Wielrenner Selectie
-    <span class="grey">{{ eventName.replaceAll('-',' ') }}</span>
+    <span class="grey">{{ eventName.replaceAll('-', ' ') }}</span>
   </h1>
   <p class="intro">
     Maak je perfecte wielrenner selectie van {{ maxRenners }} renners binnen de puntenlimiet van {{ maxPoints }} punten.
@@ -85,19 +85,20 @@
               selected: form.selectie.includes(renner.rider_id),
               disabled: checkboxDisabled(renner)
             }">
-            <input
-                type="checkbox"
-                :id="'r-' + renner.rider_id"
-                :value="renner.rider_id"
-                v-model="form.selectie"
-                :disabled="checkboxDisabled(renner)"
-                class="hidden-checkbox"
-              />
-              <span class="custom-checkbox"></span>
+              <input type="checkbox" :id="'r-' + renner.rider_id" :value="renner.rider_id" v-model="form.selectie"
+                :disabled="checkboxDisabled(renner)" class="hidden-checkbox" />
               <div class="rider-info">
-                <p class="rider-name">{{ renner.rider_name }}</p>
-                <span class="badge badge--outline">{{ renner.fav_points }}pt</span>
+                <p class="rider-name">{{ formatRiderName(renner.rider_name) }}</p>
+                <span v-if="Number(renner.fav_points) > 0" class="badge badge--outline">
+                  {{ renner.fav_points }}pt
+                </span>
               </div>
+              <span class="checkbox-wrapper">
+                <svg v-if="form.selectie.includes(renner.rider_id)" class="check-icon" viewBox="0 0 24 24">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+                <span v-else class="plus-icon">+</span>
+              </span>
             </label>
 
           </div>
@@ -202,9 +203,24 @@ const checkboxDisabled = (renner) => {
 }
 
 const extractUppercase = (name) => {
-  // Match alle woorden in hoofdletters tot het eerste woord met een kleine letter
-  const match = name.match(/^([A-ZÀ-Ü\- ]+)(?= [A-ZÀ-ÿ][a-z])/)
+  // Match alle uppercase woorden tot het eerste woord met een kleine letter (Unicode aware)
+  const match = name.match(/^([\p{Lu}\- ]+)(?= \p{Lu}?[a-z])/u)
   return match ? match[1].trim() : name
+}
+
+function formatRiderName(fullName) {
+  const parts = fullName.trim().split(' ')
+  if (parts.length < 2) return fullName
+
+  const firstName = parts.pop()
+  const lastName = parts.join(' ').toLowerCase()
+
+  // Capitalize eerste letter na spaties en speciale tekens
+  const capitalizedLastName = lastName.replace(/(^|\s|-)(\p{L})/gu, (_, sep, letter) =>
+    sep + letter.toLocaleUpperCase()
+  )
+
+  return `${firstName} ${capitalizedLastName}`
 }
 
 const submitForm = async () => {
@@ -261,13 +277,15 @@ const submitForm = async () => {
   display: block;
   color: var(--muted-foreground);
 }
+
 .form-header {
   position: sticky;
   top: 0;
   background-color: var(--background);
-  padding: 1rem;
+  padding: 1rem 0;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1rem 0.5rem -0.5rem rgba(0, 0, 0, 0.05);
 }
 
 .form-section {
@@ -296,15 +314,18 @@ const submitForm = async () => {
 }
 
 .status-count {
-  display: flex; 
-  align-items: center; 
+  display: flex;
+  align-items: center;
   gap: 6px;
 }
 
 .selected-riders {
-  flex-grow: 1;     /* neemt alle beschikbare ruimte in */
-  min-width: 0;     /* belangrijk voor overflow wrapping in flex */
-  overflow: hidden; /* voorkom overflow buiten container */
+  flex-grow: 1;
+  /* neemt alle beschikbare ruimte in */
+  min-width: 0;
+  /* belangrijk voor overflow wrapping in flex */
+  overflow: hidden;
+  /* voorkom overflow buiten container */
 }
 
 .selected-riders ul {
@@ -320,50 +341,54 @@ const submitForm = async () => {
   max-width: 100%;
 }
 
-.status-row > button,
-.status-row > .status-count {
-  flex-shrink: 0;   /* knop krimpt niet */
-  white-space: nowrap; /* knop tekst blijft op één lijn */
+.status-row>button,
+.status-row>.status-count {
+  flex-shrink: 0;
+  /* knop krimpt niet */
+  white-space: nowrap;
+  /* knop tekst blijft op één lijn */
 }
 
 @media (max-width: 768px) {
   .status-row {
     flex-direction: column;
-    align-items: flex-start; /* items links uitlijnen */
+    align-items: flex-start;
+    /* items links uitlijnen */
     gap: 0.5rem;
   }
 
   .selected-riders ul {
-      justify-content: flex-start;
+    justify-content: flex-start;
   }
 
-  .status-row > button {
-    align-self: flex-start; /* links onder */
+  .status-row>button {
+    align-self: flex-start;
+    /* links onder */
     flex-shrink: 0;
-    white-space: nowrap; /* tekst niet breken */
-    width: auto; /* geen volle breedte */
-    display: inline-flex; /* alleen zo breed als nodig */
+    white-space: nowrap;
+    /* tekst niet breken */
+    width: auto;
+    /* geen volle breedte */
+    display: inline-flex;
+    /* alleen zo breed als nodig */
   }
 }
 
 .teams-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
-}
-
-.team-column {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0.8rem;
-  background: #f9f9f9;
+  gap: 2rem;
+  margin: 6rem 0;
 }
 
 .team-name {
-  font-weight: var(--font-weight-light);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-xs);
   color: var(--primary);
+  text-transform: uppercase;
   margin: 0;
+  border-top: 1px solid var(--primary);
+  padding-top: 0.5rem;
 }
 
 .team-stats {
@@ -375,21 +400,21 @@ const submitForm = async () => {
   align-items: center;
   flex-wrap: wrap;
   gap: 3px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
 }
 
 
 .rider-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.5rem;
 }
 
 .rider-card {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background-color: white;
+  border-bottom: 1px solid var(--border);
+  background-color: transparent;
   transition: background-color 0.2s, border-color 0.2s;
-  padding: 9px 12px;
+  padding: 3px 6px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -399,13 +424,11 @@ const submitForm = async () => {
 
 .rider-card.selected {
   background-color: var(--secondary);
-  border-color: var(--primary);
 }
 
 .rider-card.disabled {
-  opacity: 0.4;
+  opacity: 0.2;
   pointer-events: none;
-  /* voorkomt hover of klikken */
   cursor: not-allowed;
 }
 
@@ -413,36 +436,49 @@ const submitForm = async () => {
   display: none;
 }
 
-.custom-checkbox {
-  width: var(--text-xs);
-  height: var(--text-xs);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  background-color: transparent;
-  position: relative;
-  transition: background-color 0.2s, border-color 0.2s;
+.checkbox-wrapper {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
-.rider-card.selected .custom-checkbox {
-  background-color: var(--primary);
-  border-color: var(--primary);
+.plus-icon {
+  font-size: var(--text-2xl);
+  color: var(--muted-foreground);
+  transition: opacity 0.2s ease;
 }
 
-.custom-checkbox::after {
-  content: '';
-  position: absolute;
-  display: none;
-  left: 3px;
-  top: 0;
-  width: calc(var(--text-xs) * 0.3);
-  height: calc(var(--text-xs) * 0.6);
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
+.check-icon {
+  width: var(--text-base);
+  height: var(--text-base);
+  stroke: var(--primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  border-radius: 3px;
+  animation: bounceIn 0.3s ease;
 }
 
-.rider-card.selected .custom-checkbox::after {
-  display: block;
+/* animatie voor SVG vinkje */
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .rider-info {
@@ -456,8 +492,9 @@ const submitForm = async () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin: 0;
+  margin: 0 0 0.5rem;
   font-weight: var(--font-weight-medium);
+  font-size: var(--text-sm);
 }
 
 .rider-points {
@@ -470,8 +507,8 @@ const submitForm = async () => {
 }
 
 .progress-bar {
-  background-color: #eee;
-  border-radius: 4px;
+  background-color: var(--secondary);
+  border-radius: 3px;
   overflow: hidden;
   height: 10px;
   margin-bottom: 0.5rem;
@@ -489,7 +526,7 @@ const submitForm = async () => {
 }
 
 .icon-s {
-  width: var(--text-sm);
+  width: var(--text-xs);
 }
 
 .icon--white {
