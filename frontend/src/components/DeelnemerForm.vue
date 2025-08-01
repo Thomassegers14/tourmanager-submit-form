@@ -85,8 +85,15 @@
               selected: form.selectie.includes(renner.rider_id),
               disabled: checkboxDisabled(renner)
             }">
-              <input type="checkbox" :id="'r-' + renner.rider_id" :value="renner.rider_id" v-model="form.selectie"
-                :disabled="checkboxDisabled(renner)" />
+            <input
+                type="checkbox"
+                :id="'r-' + renner.rider_id"
+                :value="renner.rider_id"
+                v-model="form.selectie"
+                :disabled="checkboxDisabled(renner)"
+                class="hidden-checkbox"
+              />
+              <span class="custom-checkbox"></span>
               <div class="rider-info">
                 <p class="rider-name">{{ renner.rider_name }}</p>
                 <span class="badge badge--outline">{{ renner.fav_points }}pt</span>
@@ -402,11 +409,40 @@ const submitForm = async () => {
   cursor: not-allowed;
 }
 
-.rider-card input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  margin: 0;
+.hidden-checkbox {
+  display: none;
+}
+
+.custom-checkbox {
+  width: var(--text-xs);
+  height: var(--text-xs);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background-color: transparent;
+  position: relative;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.rider-card.selected .custom-checkbox {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.custom-checkbox::after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 3px;
+  top: 0;
+  width: calc(var(--text-xs) * 0.3);
+  height: calc(var(--text-xs) * 0.6);
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.rider-card.selected .custom-checkbox::after {
+  display: block;
 }
 
 .rider-info {
