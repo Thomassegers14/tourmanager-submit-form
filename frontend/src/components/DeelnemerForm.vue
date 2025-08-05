@@ -32,22 +32,22 @@
           <div class="status-count">
             <Users class="icon" />
             <p>Geselecteerd:</p>
-            <span class="badge badge--secondary">
+            <span class="badge badge-secondary">
               {{ form.selectie.length }} renners
             </span>
           </div>
           <div class="selected-riders" v-if="selectedRiders.length > 0">
             <ul>
-              <li class="badge badge--secondary"
+              <span class="badge badge-secondary"
                 v-for="r in (showAllSelected ? selectedRiders : selectedRiders.slice(0, showSelectedRiders))"
                 :key="r.rider_id">
                 {{ extractUppercase(r.rider_name) }}
-              </li>
+              </span>
 
-              <li v-if="selectedRiders.length > showSelectedRiders" class="badge badge--primary toggle-badge"
+              <button v-if="selectedRiders.length > showSelectedRiders" type="button" class="button button-s"
                 @click="showAllSelected = !showAllSelected">
                 {{ showAllSelected ? 'Toon minder' : '+' + (selectedRiders.length - showSelectedRiders) + ' meer' }}
-              </li>
+              </button>
             </ul>
           </div>
           <button :disabled="!formValid">
@@ -89,15 +89,15 @@
                 :disabled="checkboxDisabled(renner)" class="hidden-checkbox" />
               <div class="rider-info">
                 <p class="rider-name">{{ formatRiderName(renner.rider_name) }}</p>
-                <span v-if="Number(renner.fav_points) > 0" class="badge badge--outline">
+                <span v-if="Number(renner.fav_points) > 0" class="badge badge-outline">
                   {{ renner.fav_points }}pt
                 </span>
               </div>
               <span class="checkbox-wrapper">
-                <svg v-if="form.selectie.includes(renner.rider_id)" class="check-icon" viewBox="0 0 24 24">
+                <svg v-if="form.selectie.includes(renner.rider_id)" class="icon-check" viewBox="0 0 24 24">
                   <path d="M5 13l4 4L19 7" />
                 </svg>
-                <span v-else class="plus-icon">+</span>
+                <span v-else class="icon-plus">+</span>
               </span>
             </label>
 
@@ -111,7 +111,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { Users, Send } from 'lucide-vue-next'
+import { Users, Send, Eclipse } from 'lucide-vue-next'
 import renners from '../data/startlist-tour-de-france-2025.json'
 
 const eventName = computed(() => {
@@ -404,7 +404,6 @@ const submitForm = async () => {
   padding-bottom: 12px;
 }
 
-
 .rider-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -446,21 +445,18 @@ const submitForm = async () => {
   transition: background-color 0.3s, transform 0.3s;
 }
 
-.plus-icon {
+.icon-plus {
   font-size: var(--text-2xl);
   color: var(--muted-foreground);
   transition: opacity 0.2s ease;
 }
 
-.check-icon {
-  width: var(--text-base);
-  height: var(--text-base);
+.icon-check {
   stroke: var(--primary);
   stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
-  border-radius: 3px;
   animation: bounceIn 0.3s ease;
 }
 
@@ -489,9 +485,6 @@ const submitForm = async () => {
 }
 
 .rider-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   margin: 0 0 0.5rem;
   font-weight: var(--font-weight-medium);
   font-size: var(--text-sm);
@@ -518,27 +511,5 @@ const submitForm = async () => {
   height: 10px;
   background-color: var(--accent);
   transition: width 0.3s ease;
-}
-
-.icon {
-  width: 18px;
-  color: var(--muted-foreground)
-}
-
-.icon-s {
-  width: var(--text-xs);
-}
-
-.icon--white {
-  color: white;
-}
-
-.toggle-badge {
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.toggle-badge:hover {
-  background-color: #e0e0e0;
 }
 </style>
