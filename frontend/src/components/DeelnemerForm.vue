@@ -1,18 +1,8 @@
 <template>
-  <h1>
-    Wielrenner Selectie
-    <span class="grey">{{ eventName.replaceAll('-', ' ') }}</span>
-  </h1>
-  <p class="intro">
-    Maak je perfecte wielrenner selectie van {{ maxRenners }} renners binnen de puntenlimiet van {{ maxPoints }} punten.
-    Kies strategisch uit de beste renners van
-    verschillende teams.
-  </p>
-
   <form @submit.prevent="submitForm">
 
-    <div class="form-section">
-      <h2 class="form-section-title">Persoonlijke gegevens</h2>
+    <section>
+      <h2 class="section-title">Persoonlijke gegevens</h2>
       <div class="input-container">
         <input v-model="form.voornaam" placeholder="Voornaam" required />
         <input v-model="form.achternaam" placeholder="Achternaam" required />
@@ -23,10 +13,10 @@
           Vul alle velden in: voornaam, achternaam en e-mail zijn verplicht.
         </span>
       </p>
-    </div>
+    </section>
 
-    <div class="form-section">
-      <h2 class="form-section-title">Stel je ploeg samen</h2>
+    <section>
+      <h2 class="section-title">Stel je ploeg samen</h2>
       <div class="form-header">
         <div class="status-row">
           <div class="status-count">
@@ -104,7 +94,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
   </form>
 </template>
@@ -114,14 +104,12 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Users, Send, Eclipse } from 'lucide-vue-next'
 import renners from '../data/startlist-tour-de-france-2025.json'
 
-const eventName = computed(() => {
-  const first = renners[0]
-  return first?.event_id || 'onbekend'
+const props = defineProps({
+  maxPoints: Number,
+  maxRenners: Number
 })
 
-const maxPoints = 10
-const maxRenners = 12
-
+const { maxPoints, maxRenners } = props
 
 const showSelectedRiders = ref(5)
 const showAllSelected = ref(false)
@@ -273,11 +261,6 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
-.grey {
-  display: block;
-  color: var(--muted-foreground);
-}
-
 .form-header {
   position: sticky;
   top: 0;
@@ -286,15 +269,6 @@ const submitForm = async () => {
   z-index: 10;
   border-bottom: 1px solid var(--border);
   box-shadow: 0 1rem 0.5rem -0.5rem rgba(0, 0, 0, 0.05);
-}
-
-.form-section {
-  border-top: 1px solid var(--border);
-  margin: 6em 0;
-}
-
-.form-section-title {
-  font-size: var(--text-lg);
 }
 
 .input-container {
