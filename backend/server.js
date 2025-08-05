@@ -35,7 +35,7 @@ app.post('/submit', async (req, res) => {
 })
 
 // GET /inzendingen
-app.get('https://tourmanager-submit-form.onrender.com/inzendingen', async (req, res) => {
+app.get('/inzendingen', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM inzendingen ORDER BY tijdstip DESC');
     res.json(result.rows);
