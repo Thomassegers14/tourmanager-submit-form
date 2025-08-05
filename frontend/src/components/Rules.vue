@@ -271,14 +271,8 @@ const props = defineProps({
   margin-bottom: 0;
 }
 
-.rule-card table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
 .rule-card table th,
 .rule-card table td {
-    border-bottom: 1px solid var(--border);
     text-align: right;
     font-weight: var(--font-weight-medium);
     font-size: var(--text-sm);
@@ -292,8 +286,6 @@ const props = defineProps({
 
 .rule-card table th {
     font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-spaced);
 }
 
 details {

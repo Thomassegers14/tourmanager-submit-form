@@ -263,7 +263,7 @@ const submitForm = async () => {
 <style scoped>
 .form-header {
   position: sticky;
-  top: 0;
+  top: 49px;
   background-color: var(--background);
   padding: 1rem 0;
   z-index: 10;
@@ -295,11 +295,8 @@ const submitForm = async () => {
 
 .selected-riders {
   flex-grow: 1;
-  /* neemt alle beschikbare ruimte in */
   min-width: 0;
-  /* belangrijk voor overflow wrapping in flex */
   overflow: hidden;
-  /* voorkom overflow buiten container */
 }
 
 .selected-riders ul {

@@ -51,7 +51,7 @@
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  place-items: start;
   min-width: 320px;
   min-height: 100vh;
   background-color: var(--background);
@@ -84,7 +84,7 @@ body {
 #app {
   max-width: 1280px;
   width: 100%;
-  margin: 0 auto;
+  margin: 48px auto;
   padding: 2rem;
   box-sizing: border-box;
 }
@@ -141,6 +141,10 @@ ul,
 ol {
   padding-left: 1.5rem;
   margin-bottom: 1rem;
+}
+
+a {
+  text-decoration: none;
 }
 
 blockquote {
@@ -307,6 +311,27 @@ button:disabled {
 
 .icon-s {
   width: var(--text-xs);
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+table th {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-spaced);
+    color: var(--muted-foreground);
+    padding: 0.5em 0;
 }
 
 /* Dark mode override */
