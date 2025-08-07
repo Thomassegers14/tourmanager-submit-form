@@ -53,10 +53,10 @@ app.post('/admin-login', (req, res) => {
   } else {
     res.status(401).json({ message: 'Ongeldig wachtwoord' });
   }
-})
 
-console.log('Ontvangen wachtwoord:', password);
-console.log('Verwacht wachtwoord:', process.env.ADMIN_PASSWORD);
+  console.log('Ontvangen wachtwoord:', password);
+  console.log('Verwacht wachtwoord:', process.env.ADMIN_PASSWORD);
+})
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server draait op poort ${PORT}`))
