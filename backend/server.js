@@ -5,8 +5,6 @@ import cors from 'cors';
 
 dotenv.config();
 
-console.log("ADMIN_PASSWORD op server:", process.env.ADMIN_PASSWORD)
-
 const app = express();
 app.use(cors({
   origin: ['http://localhost:5173', 'https://tourmanager-submit-form-1.onrender.com'],
