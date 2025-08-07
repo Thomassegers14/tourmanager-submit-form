@@ -6,7 +6,7 @@
       Admin
     </router-link>
 
-    <button v-if="isAdmin" class="logout-btn" @click="logout">Logout</button>
+    <button v-if="isAdmin" class="button button-s" @click="logout">Logout</button>
   </nav>
 </template>
 

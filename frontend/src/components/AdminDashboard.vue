@@ -63,8 +63,6 @@ const parsePostgresArray = (str) => {
 
 const toggleDetails = (id) => {
   expandedId.value = expandedId.value === id ? null : id;
-  console.log(id)
-  console.log(expandedId)
 }
 
 const filteredInzendingen = computed(() => {
