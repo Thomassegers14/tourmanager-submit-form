@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DeelnemerPage from '../views/DeelnemerPage.vue'
-import AdminDashboard from '../views/AdminDashboard.vue'
-import AdminLogin from '../views/AdminLogin.vue'
+import Admin from '../views/Admin.vue'
 import NotFound from '../views/NotFound.vue'
 
 const routes = [
@@ -11,15 +10,9 @@ const routes = [
     component: DeelnemerPage
   },
   {
-    path: '/admin-login',
-    name: 'AdminLogin',
-    component: AdminLogin
-  },
-  {
     path: '/admin',
-    name: 'AdminDashboard',
-    component: AdminDashboard,
-    meta: { requiresAuth: true }
+    name: 'Admin',
+    component: Admin
   },
   {
     path: '/:pathMatch(.*)*',

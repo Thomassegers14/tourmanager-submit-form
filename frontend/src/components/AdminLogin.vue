@@ -3,7 +3,7 @@
   <div class="login">
     <h2>Admin Login</h2>
     <form @submit.prevent="checkPassword">
-      <input v-model="password" type="password" placeholder="Voer admin wachtwoord in" />
+      <input v-model="password" type="password" placeholder="Wachtwoord" />
       <button type="submit">Login</button>
       <p v-if="error" class="error">Ongeldig wachtwoord</p>
     </form>
@@ -12,11 +12,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 const password = ref('')
 const error = ref(false)
-const router = useRouter()
+const emit = defineEmits(['login-success'])
 
 const checkPassword = async () => {
   try {
@@ -28,7 +27,7 @@ const checkPassword = async () => {
 
     if (res.ok) {
       localStorage.setItem('isAdmin', 'true')
-      router.push('/admin')
+      emit('login-success')
     } else {
       error.value = true
     }
@@ -41,13 +40,15 @@ const checkPassword = async () => {
 
 <style scoped>
 .login {
-  max-width: 400px;
+  max-width: 600px;
   margin: 4rem auto;
   text-align: center;
 }
 
 form {
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 1rem;
 }
 .error {

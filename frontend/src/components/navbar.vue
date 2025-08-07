@@ -2,20 +2,8 @@
   <nav class="navbar">
     <router-link to="/" class="nav-link">Selectie</router-link>
 
-    <router-link
-      v-if="isAdmin"
-      to="/admin"
-      class="nav-link"
-    >
+    <router-link to="/admin" class="nav-link">
       Admin
-    </router-link>
-
-    <router-link
-      v-else
-      to="/admin-login"
-      class="nav-link"
-    >
-      Admin Login
     </router-link>
 
     <button v-if="isAdmin" class="logout-btn" @click="logout">Logout</button>
@@ -23,7 +11,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const isAdmin = ref(false)
