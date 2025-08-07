@@ -7,7 +7,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://jouwproductiefrontend.com'], // pas dit aan
+  origin: ['http://localhost:5173', 'https://tourmanager-submit-form.onrender.com'], // pas dit aan
   credentials: true
 }))
 app.use(express.json());
