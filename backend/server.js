@@ -52,7 +52,17 @@ app.get('/inzendingen', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Kan inzendingen niet ophalen' });
   }
-});
+})
+
+app.post('/admin-login', (req, res) => {
+  const { password } = req.body;
+
+  if (password === process.env.ADMIN_PASSWORD) {
+    res.status(200).json({ success: true });
+  } else {
+    res.status(401).json({ message: 'Ongeldig wachtwoord' });
+  }
+})
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server draait op poort ${PORT}`));
