@@ -18,13 +18,22 @@ const password = ref('')
 const error = ref(false)
 const router = useRouter()
 
-const checkPassword = () => {
-  const correctPassword = import.meta.env.VITE_ADMIN_PASSWORD
+const checkPassword = async () => {
+  try {
+    const res = await fetch('https://tourmanager-submit-form.onrender.com/admin-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: password.value })
+    })
 
-  if (password.value === correctPassword) {
-    localStorage.setItem('isAdmin', 'true')
-    router.push('/admin')
-  } else {
+    if (res.ok) {
+      localStorage.setItem('isAdmin', 'true')
+      router.push('/admin')
+    } else {
+      error.value = true
+    }
+  } catch (err) {
+    console.error('Login error:', err)
     error.value = true
   }
 }
