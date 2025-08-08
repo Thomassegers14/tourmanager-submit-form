@@ -288,9 +288,15 @@ const submitForm = async () => {
 }
 
 .status-count {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 6px;
+}
+
+@media (min-width: 768px) {
+  .status-count {
+    display: flex;
+  }
 }
 
 .selected-riders {
@@ -333,7 +339,7 @@ const submitForm = async () => {
   }
 
   .status-row>button {
-    align-self: flex-start;
+    align-self: center;
     /* links onder */
     flex-shrink: 0;
     white-space: nowrap;
@@ -467,15 +473,15 @@ const submitForm = async () => {
 }
 
 .points-summary {
-  margin: 1rem 0;
+  margin: 0;
 }
 
 .progress-bar {
   background-color: var(--secondary);
   border-radius: 3px;
   overflow: hidden;
-  height: 10px;
-  margin-bottom: 0.5rem;
+  height: 6px;
+  margin-bottom: 0;
 }
 
 .progress-fill {
@@ -483,4 +489,17 @@ const submitForm = async () => {
   background-color: var(--accent);
   transition: width 0.3s ease;
 }
+
+
+@media (min-width: 768px) {
+  .points-summary {
+    margin: 1rem 0;
+  }
+
+  .progress-bar {
+      height: 10px;
+      margin-bottom: 0.5rem;
+  }
+}
+
 </style>
