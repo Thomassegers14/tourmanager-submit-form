@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import DeelnemerPage from '../views/DeelnemerPage.vue'
+import DeelnemerPage from '../views/ParticipantPage.vue'
 import Admin from '../views/Admin.vue'
 import NotFound from '../views/NotFound.vue'
 

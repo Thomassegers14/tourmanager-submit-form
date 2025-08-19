@@ -15,7 +15,7 @@
 <script setup>
 import PageHeader from '../components/PageHeader.vue'
 import Rules from '../components/Rules.vue'
-import DeelnemerForm from '../components/DeelnemerForm.vue'
+import DeelnemerForm from '../components/ParticipantForm.vue'
 
 const maxPoints = 10
 const maxRenners = 12
