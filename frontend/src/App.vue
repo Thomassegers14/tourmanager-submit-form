@@ -3,11 +3,11 @@
     <Eclipse class="icon" />
     <span>darkmode</span>
   </button>
-  <navbar />
+  <Navbar />
   <router-view />
 </template>
 
 <script setup>
 import { Eclipse } from 'lucide-vue-next'
-import navbar from './components/NavBar.vue';
+import Navbar from './components/navbar.vue';
 </script>
