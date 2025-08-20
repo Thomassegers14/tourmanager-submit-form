@@ -9,5 +9,5 @@
 
 <script setup>
 import { Eclipse } from 'lucide-vue-next'
-import Navbar from './components/navbar.vue';
+import Navbar from './components/Navbar.vue';
 </script>
