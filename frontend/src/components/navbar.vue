@@ -2,6 +2,10 @@
   <nav class="navbar">
     <router-link to="/" class="nav-link">Selectie</router-link>
 
+    <router-link to="/favorieten" class="nav-link">
+      Favorieten
+    </router-link>
+
     <router-link to="/admin" class="nav-link">
       Admin
     </router-link>

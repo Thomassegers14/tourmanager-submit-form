@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DeelnemerPage from '../views/ParticipantPage.vue'
 import Admin from '../views/Admin.vue'
+import Favorieten from '../views/Favorieten.vue'
 import NotFound from '../views/NotFound.vue'
 
 const routes = [
@@ -13,6 +14,11 @@ const routes = [
     path: '/admin',
     name: 'Admin',
     component: Admin
+  },
+  {
+    path: '/favorieten',
+    name: 'favorieten',
+    component: Favorieten
   },
   {
     path: '/:pathMatch(.*)*',
