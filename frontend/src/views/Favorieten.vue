@@ -5,6 +5,30 @@
   verschillende prestatie-indicatoren afkomstig van renners samenbrengt.
   Deze indicatoren worden berekend aan de hand van Procyclingstats-data.
 </p>
+
+<div class="controls">
+  <label for="sort-select">Sorteer op</label>
+  <select class="select-outline" id="sort-select" v-model="sortColumn">
+    <option v-for="col in xColumns" :key="col" :value="col">
+           {{ columnLabels[col] }}
+    </option>
+  </select>
+</div>
+
+  <div class="plot-container">
+    <DumbbellPlot
+      :data="data"
+      :xColumns="['combined_score', 'gc_score', 'classic_score', 'sprinter_score']"
+      yColumn="rider_name"
+      xLabel="Combined score en profielscores"
+      yLabel="Renners"
+      :height='480'
+      :width="600"
+      :sortColumn="sortColumn"
+
+    />
+  </div>
+
 <section>
 
   <h3 class="section-title">Profielscores</h3>
@@ -33,6 +57,11 @@
     <code>combined_score = w₁ · GC + w₂ · ALLROUND + w₃ · SPR</code>
   </p>
 
+    <div class="scatter-container">
+    <ScatterPlot v-for="(config, index) in plots" :key="index" :data="data" :xColumn="config.x" :yColumn="config.y"
+      :xLabel="config.xLabel" :yLabel="config.yLabel" :topNLabels="10" :labelOffset="12" :height="config.height" />
+  </div>
+
 </section>
 <section>
   <h3 class="section-title">Selectie en tiers</h3>
@@ -59,17 +88,23 @@
     Tier&nbsp;2 verplaatst.
   </p>
 </section>
-
-  <div class="scatter-container">
-    <ScatterPlot v-for="(config, index) in plots" :key="index" :data="data" :xColumn="config.x" :yColumn="config.y"
-      :xLabel="config.xLabel" :yLabel="config.yLabel" :topNLabels="10" :labelOffset="12" :height="config.height" />
-  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import ScatterPlot from '../components/Scatterplot.vue'
 import data from '../data/startlist-tour-de-france-2025.json'
+import DumbbellPlot from '../components/DumbbellPlot.vue'
+import ScatterPlot from '../components/Scatterplot.vue'
+
+const xColumns = ['combined_score', 'gc_score', 'classic_score', 'sprinter_score']
+const sortColumn = ref(xColumns[0]) // default
+
+const columnLabels = {
+  combined_score: "Totaalscore",
+  gc_score: "GC-score",
+  classic_score: "Allround-score",
+  sprinter_score: "Sprinterscore"
+}
 
 const container = ref(null)
 const containerWidth = ref(500) // default waarde
@@ -90,18 +125,39 @@ onBeforeUnmount(() => {
 })
 
 const plots = [
-  { x: 'pcs_points_season', y: 'pcs_points_last_60d', xLabel: "Aantal pcs punten seizoen", yLabel: "Aantal pcs punten laatste 60 dagen", width: 500, height: 400 },
-  { x: 'pcs_gc_points', y: 'pcs_gc_points_season', xLabel: "Aantal GC pcs punten laatste 3 jaar", yLabel: "Aantal GC pcs punten seizoen", width: 500, height: 400 },
-  { x: 'pcs_sprint_points', y: 'pcs_sprint_points_season', xLabel: "Aantal sprint pcs punten laatste 3 jaar", yLabel: "Aantal sprint pcs punten seizoen", width: 500, height: 400 },
-  { x: 'rank', y: 'combined_score', xLabel: "Rank", yLabel: "Index (combined score)", width: 500, height: 400 }
+  { x: 'pcs_points_season', y: 'pcs_points_last_60d', xLabel: "Aantal pcs punten seizoen", yLabel: "Aantal pcs punten laatste 60 dagen", height: 400 },
+  { x: 'pcs_gc_points', y: 'pcs_gc_points_season', xLabel: "Aantal GC pcs punten laatste 3 jaar", yLabel: "Aantal GC pcs punten seizoen", height: 400 },
+  { x: 'pcs_sprint_points', y: 'pcs_sprint_points_season', xLabel: "Aantal sprint pcs punten laatste 3 jaar", yLabel: "Aantal sprint pcs punten seizoen", height: 400 },
 ]
 </script>
 
 <style scoped>
+
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 0.5rem;
+}
+
+.plot-container{
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.plot-container > *{
+  width: 100%;
+  max-width: 800px;
+}
+
 .scatter-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 0.5rem;
+  padding: 1rem 0;
 }
 
 .scatter-container>* {

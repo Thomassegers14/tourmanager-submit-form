@@ -301,6 +301,28 @@ button:disabled {
   display: block;
 }
 
+select {
+  border-radius: 0.35rem;
+  border: 1px solid transparent;
+  padding: 6px 9px;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--button-background);
+  color: var(--button-color);
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  transition: border-color 0.25s;
+}
+
+.select-outline {
+  border: 1px solid var(--primary);
+  background-color: transparent;
+  color: var(--primary);
+}
+
+
 .warning {
   color: var(--destructive);
   font-size: var(--text-xs);
