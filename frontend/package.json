@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueuse/core": "^13.7.0",
     "d3": "^7.9.0",
     "lucide-vue-next": "^0.535.0",
     "node": "^20.19.4",
