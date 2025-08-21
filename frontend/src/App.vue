@@ -1,8 +1,8 @@
 <template>
-  <button id="toggle-darkmode" class="button-darkmode">
+  <!-- <button id="toggle-darkmode" class="button-darkmode">
     <Eclipse class="icon" />
     <span>darkmode</span>
-  </button>
+  </button> -->
   <Navbar />
   <router-view />
 </template>
