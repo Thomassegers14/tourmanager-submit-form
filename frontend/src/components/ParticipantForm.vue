@@ -102,7 +102,9 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Users, Send, Eclipse } from 'lucide-vue-next'
-import renners from '../data/startlist-vuelta-a-espana-2025.json'
+import { useStartlist } from '../data/getStartlist.js';
+
+const { startlist, fetchStartlist } = useStartlist();
 
 const props = defineProps({
   maxPoints: Number,
@@ -121,6 +123,7 @@ const handleResize = () => {
 onMounted(() => {
   handleResize()
   window.addEventListener('resize', handleResize)
+  fetchStartlist("vuelta-a-espana", 2025)
 })
 
 onBeforeUnmount(() => {
@@ -136,7 +139,7 @@ const form = ref({
 })
 
 const selectedRiders = computed(() =>
-  renners.filter(r => form.value.selectie.includes(r.rider_id))
+  startlist.value.filter(r => form.value.selectie.includes(r.rider_id))
 )
 
 const totalPoints = computed(() =>
@@ -146,7 +149,7 @@ const totalPoints = computed(() =>
 // 🔁 groepeer renners per team_name
 const groupedRenners = computed(() => {
   const grouped = {}
-  for (const renner of renners) {
+  for (const renner of startlist.value) {
     if (!grouped[renner.team_name]) {
       grouped[renner.team_name] = []
     }
@@ -222,7 +225,7 @@ const submitForm = async () => {
   }
 
   // 👉 Bouw aparte arrays
-  const selected = renners.filter(r =>
+  const selected = startlist.value.filter(r =>
     form.value.selectie.includes(r.rider_id)
   )
 

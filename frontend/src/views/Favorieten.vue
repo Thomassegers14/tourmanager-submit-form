@@ -19,7 +19,7 @@
   <!-- Dumbbell plot -->
   <div ref="container" class="plot-container">
     <DumbbellPlot
-      :data="data"
+      :data="startlist"
       :xColumns="['combined_score', 'gc_score', 'classic_score', 'sprinter_score']"
       yColumn="rider_name"
       xLabel="Combined score en profielscores"
@@ -62,7 +62,7 @@
     <div class="scrolly-container">
       <div class="graphic" ref="graphic">
         <ScatterPlot
-          :data="data"
+          :data="startlist"
           :xColumn="activeStep.x"
           :yColumn="activeStep.y"
           :xLabel="activeStep.xLabel"
@@ -117,9 +117,11 @@
 import { ref, computed, onMounted, onBeforeUnmount } from "vue"
 import { useIntersectionObserver } from "@vueuse/core"
 
-import data from "../data/startlist-vuelta-a-espana-2025.json"
 import DumbbellPlot from "../components/DumbbellPlot.vue"
 import ScatterPlot from "../components/Scatterplot.vue"
+import { useStartlist } from '../data/getStartlist.js';
+
+const { startlist, fetchStartlist } = useStartlist();
 
 const steps = [
   {
@@ -174,6 +176,8 @@ const updateWidth = () => {
 onMounted(() => {
   updateWidth()
   window.addEventListener("resize", updateWidth)
+
+  fetchStartlist('vuelta-a-espana', 2025)
 
   stepRefs.value.forEach((el, index) => {
     if (!el) return
