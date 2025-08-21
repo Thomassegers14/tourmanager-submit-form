@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="adminContainer">
     <AdminLogin v-if="!isAdmin" @login-success="onLoginSuccess" />
     <AdminDashboard v-else />
   </div>
@@ -21,3 +21,9 @@ onMounted(() => {
   isAdmin.value = localStorage.getItem('isAdmin') === 'true'
 })
 </script>
+
+<style scoped>
+.adminContainer {
+  min-height: 60vh;
+}
+</style>
