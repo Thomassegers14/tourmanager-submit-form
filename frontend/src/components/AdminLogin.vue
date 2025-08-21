@@ -1,7 +1,7 @@
 <!-- views/AdminLogin.vue -->
 <template>
   <div class="login">
-    <h2>Admin Login</h2>
+    <h1>Admin Login</h1>
     <form @submit.prevent="checkPassword">
       <input v-model="password" type="password" placeholder="Wachtwoord" />
       <button type="submit">Login</button>
