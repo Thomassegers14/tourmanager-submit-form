@@ -92,7 +92,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import data from '../data/startlist-tour-de-france-2025.json'
+import data from '../data/startlist-vuelta-a-espana-2025.json'
 import DumbbellPlot from '../components/DumbbellPlot.vue'
 import ScatterPlot from '../components/Scatterplot.vue'
 

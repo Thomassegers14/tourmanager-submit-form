@@ -102,7 +102,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Users, Send, Eclipse } from 'lucide-vue-next'
-import renners from '../data/startlist-tour-de-france-2025.json'
+import renners from '../data/startlist-vuelta-a-espana-2025.json'
 
 const props = defineProps({
   maxPoints: Number,
