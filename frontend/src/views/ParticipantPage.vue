@@ -5,7 +5,6 @@
       :subtitle="eventName.replaceAll('-', ' ')"
       :maxPoints="maxPoints"
       :maxRenners="maxRenners"
-      :deadline="deadline"
     />
     <Rules :maxPoints="maxPoints" :maxRenners="maxRenners" />
     <DeelnemerForm :maxPoints="maxPoints" :maxRenners="maxRenners" />
