@@ -1,8 +1,5 @@
 <template>
   <div class="page-header">
-    <Countdown
-      :deadline="deadline"
-    ></Countdown>
     <h1>
       {{ title }}
       <span class="grey">{{ subtitle }}</span>
@@ -15,7 +12,6 @@
 </template>
 
 <script setup>
-import Countdown from './Countdown.vue';
 
 defineProps({
   title: String,
