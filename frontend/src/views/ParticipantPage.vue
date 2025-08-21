@@ -20,5 +20,4 @@ import DeelnemerForm from '../components/ParticipantForm.vue'
 const maxPoints = 10
 const maxRenners = 12
 const eventName = 'Vuelta a España-2025'
-const deadline = new Date('2025-08-23T10:00:00Z')
 </script>
