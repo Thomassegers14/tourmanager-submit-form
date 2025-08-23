@@ -67,10 +67,10 @@
                         <thead>
                             <tr>
                                 <th>Positie</th>
-                                <th>Geel</th>
-                                <th>Groen</th>
-                                <th>Bol</th>
-                                <th>Wit</th>
+                                <th>GC</th>
+                                <th>Punten</th>
+                                <th>Kom</th>
+                                <th>Youth</th>
                             </tr>
                         </thead>
                         <tbody>
