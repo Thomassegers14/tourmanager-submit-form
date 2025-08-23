@@ -12,7 +12,8 @@
     <!-- Grid -->
     <div class="inzendingen-grid">
       <div class="inzending-card" v-for="inzending in filteredInzendingen" :key="inzending.id"
-        :class="{ duplicate: isDuplicate(inzending.email) }" @click="toggleDetails(inzending.id)">
+        :class="{ duplicate: isDuplicate(inzending.email, inzending.voornaam, inzending.achternaam) }"
+        @click="toggleDetails(inzending.id)">
         <div class="card-time">
           <p class="tijdstip">{{ formatDate(inzending.tijdstip) }}</p>
           <p class="tijdstip">{{ formatTime(inzending.tijdstip) }}</p>
@@ -74,19 +75,28 @@ const filteredInzendingen = computed(() => {
   })
 })
 
-const duplicateEmails = computed(() => {
-  const counts = {}
-  inzendingen.value.forEach(({ email }) => {
-    const key = email.toLowerCase()
-    counts[key] = (counts[key] || 0) + 1
+// helper om een consistente sleutel te maken
+const makeDupKey = ({ email = '', voornaam = '', achternaam = '' }) =>
+  `${String(email).trim().toLowerCase()}|${String(voornaam).trim().toLowerCase()}|${String(achternaam).trim().toLowerCase()}`
+
+// Set met alle combinaties die vaker dan 1x voorkomen
+const duplicateKeySet = computed(() => {
+  const counts = new Map()
+  for (const item of inzendingen.value) {
+    const key = makeDupKey(item)
+    counts.set(key, (counts.get(key) || 0) + 1)
+  }
+  const result = new Set()
+  counts.forEach((count, key) => {
+    if (count > 1) result.add(key)
   })
-  return Object.entries(counts)
-    .filter(([_, count]) => count > 1)
-    .map(([email]) => email)
+  return result
 })
 
-const isDuplicate = (email) => {
-  return duplicateEmails.value.includes(email.toLowerCase())
+// gebruik de Set om snel te checken
+const isDuplicate = (email, voornaam, achternaam) => {
+  const key = makeDupKey({ email, voornaam, achternaam })
+  return duplicateKeySet.value.has(key)
 }
 
 const formatDate = (datumStr) => {
