@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import DeelnemerPage from '../views/ParticipantPage.vue'
-import Admin from '../views/Admin.vue'
-import Favorieten from '../views/Favorieten.vue'
 import NotFound from '../views/NotFound.vue'
 
 const routes = [
@@ -13,12 +11,12 @@ const routes = [
   {
     path: '/admin',
     name: 'Admin',
-    component: Admin
+    component: () => import('../views/Admin.vue')
   },
   {
     path: '/favorieten',
     name: 'favorieten',
-    component: Favorieten
+    component: () => import('../views/Favorieten.vue')
   },
   {
     path: '/:pathMatch(.*)*',
@@ -28,7 +26,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
