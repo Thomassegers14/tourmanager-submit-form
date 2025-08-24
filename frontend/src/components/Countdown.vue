@@ -33,7 +33,7 @@ onUnmounted(() => {
   <span v-if="timeLeft.total > 0" class="badge badge-outline">
     {{ timeLeft.days }}d {{ timeLeft.hours }}u {{ timeLeft.minutes }}m {{ timeLeft.seconds }}s
   </span>
-  <div v-else>
+  <span v-else class="badge badge-outline">
     Deadline voorbij!
-  </div>
+  </span>
 </template>
