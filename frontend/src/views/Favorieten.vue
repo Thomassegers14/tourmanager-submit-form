@@ -120,6 +120,7 @@ import { useIntersectionObserver } from "@vueuse/core"
 import DumbbellPlot from "../components/DumbbellPlot.vue"
 import ScatterPlot from "../components/Scatterplot.vue"
 import { useStartlist } from '../data/getStartlist.js';
+import { EVENT_ID, EVENT_YEAR } from '../config/event.js'
 
 const { startlist, fetchStartlist } = useStartlist();
 
@@ -177,7 +178,7 @@ onMounted(() => {
   updateWidth()
   window.addEventListener("resize", updateWidth)
 
-  fetchStartlist('giro-d-italia', 2026)
+  fetchStartlist(EVENT_ID, EVENT_YEAR)
 
   stepRefs.value.forEach((el, index) => {
     if (!el) return

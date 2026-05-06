@@ -16,6 +16,7 @@
 import Navbar from './components/navbar.vue';
 import Countdown from './components/Countdown.vue';
 import AppFooter from './components/Footer.vue'
+import { EVENT_DEADLINE } from './config/event.js'
 
-const deadline = new Date('2025-08-23T10:00:00Z')
+const deadline = EVENT_DEADLINE
 </script>

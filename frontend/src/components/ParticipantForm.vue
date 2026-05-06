@@ -103,6 +103,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Users, Send, Eclipse } from 'lucide-vue-next'
 import { useStartlist } from '../data/getStartlist.js';
+import { EVENT_ID, EVENT_YEAR } from '../config/event.js'
 
 const { startlist, fetchStartlist } = useStartlist();
 
@@ -123,7 +124,7 @@ const handleResize = () => {
 onMounted(() => {
   handleResize()
   window.addEventListener('resize', handleResize)
-  fetchStartlist("giro-d-italia", 2026)
+  fetchStartlist(EVENT_ID, EVENT_YEAR)
 })
 
 onBeforeUnmount(() => {
