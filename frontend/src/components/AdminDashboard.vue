@@ -7,11 +7,6 @@
       <input v-model="filters.voornaam" placeholder="Filter op voornaam" />
       <input v-model="filters.achternaam" placeholder="Filter op achternaam" />
       <input v-model="filters.email" placeholder="Filter op email" />
-      <input v-model="filters.renner" placeholder="Zoek op rennersnaam" />
-      <select v-model="filters.ploeg" class="select-outline">
-        <option value="">Alle ploegen</option>
-        <option v-for="team in allTeams" :key="team" :value="team">{{ team }}</option>
-      </select>
     </div>
 
     <!-- Grid -->
@@ -49,30 +44,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useStartlist } from '../data/getStartlist.js'
-import { EVENT_ID, EVENT_YEAR } from '../config/event.js'
-
 const inzendingen = ref([])
 const expandedId = ref(null)
 const filters = ref({
   voornaam: '',
   achternaam: '',
   email: '',
-  renner: '',
-  ploeg: '',
-})
-
-const { startlist, fetchStartlist } = useStartlist()
-
-const riderTeamMap = computed(() => {
-  const map = new Map()
-  startlist.value.forEach(r => map.set(String(r.rider_id), r.team_name))
-  return map
-})
-
-const allTeams = computed(() => {
-  const teams = new Set(startlist.value.map(r => r.team_name).filter(Boolean))
-  return [...teams].sort()
 })
 
 const parsePostgresArray = (str) => {
@@ -95,17 +72,7 @@ const filteredInzendingen = computed(() => {
     const aMatch = item.achternaam.toLowerCase().includes(filters.value.achternaam.toLowerCase())
     const eMatch = item.email.toLowerCase().includes(filters.value.email.toLowerCase())
 
-    const rennerZoek = filters.value.renner.toLowerCase()
-    const rMatch = !rennerZoek || item.rider_names_parsed.some(
-      n => n.toLowerCase().includes(rennerZoek)
-    )
-
-    const ploegFilter = filters.value.ploeg
-    const pMatch = !ploegFilter || (item.rider_ids_parsed ?? parsePostgresArray(item.rider_ids)).some(
-      id => riderTeamMap.value.get(String(id)) === ploegFilter
-    )
-
-    return vMatch && aMatch && eMatch && rMatch && pMatch
+    return vMatch && aMatch && eMatch
   })
 })
 
@@ -151,13 +118,11 @@ const formatTime = (datumStr) => {
 }
 
 onMounted(async () => {
-  fetchStartlist(EVENT_ID, EVENT_YEAR)
   try {
     const res = await fetch('/api/inzendingen')
     const data = await res.json()
     data.forEach(item => {
       item.rider_names_parsed = parsePostgresArray(item.rider_names)
-      item.rider_ids_parsed = parsePostgresArray(item.rider_ids)
     })
     inzendingen.value = data
   } catch (err) {

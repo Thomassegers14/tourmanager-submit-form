@@ -60,9 +60,20 @@
         </div>
       </div>
 
+      <!-- Zoek- en ploegfilter -->
+      <div class="rider-filters">
+        <input v-model="searchRenner" placeholder="Zoek renner..." class="rider-search" />
+        <select v-model="filterPloeg" class="select-outline">
+          <option value="">Alle ploegen</option>
+          <option v-for="team in allTeams" :key="team" :value="team">
+            {{ team.replace(/\s*\([^)]*\)/g, '').trim() }}
+          </option>
+        </select>
+      </div>
+
       <!-- Grid van teams en renners -->
       <div class="teams-grid">
-        <div v-for="(renners, team) in groupedRenners" :key="team" class="team-column">
+        <div v-for="(renners, team) in filteredGroupedRenners" :key="team" class="team-column">
           <h6 class="team-name">
             {{ team.replace(/\s*\([^)]*\)/g, "").trim() }}
           </h6>
@@ -157,6 +168,23 @@ const groupedRenners = computed(() => {
     grouped[renner.team_name].push(renner)
   }
   return grouped
+})
+
+const searchRenner = ref('')
+const filterPloeg = ref('')
+
+const allTeams = computed(() => Object.keys(groupedRenners.value).sort())
+
+const filteredGroupedRenners = computed(() => {
+  const result = {}
+  for (const [team, renners] of Object.entries(groupedRenners.value)) {
+    if (filterPloeg.value && team !== filterPloeg.value) continue
+    const filtered = searchRenner.value
+      ? renners.filter(r => r.rider_name.toLowerCase().includes(searchRenner.value.toLowerCase()))
+      : renners
+    if (filtered.length > 0) result[team] = filtered
+  }
+  return result
 })
 
 const getTeamStats = (teamName) => {
@@ -506,4 +534,16 @@ const submitForm = async () => {
   }
 }
 
+
+.rider-filters {
+  display: flex;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.rider-search {
+  flex: 1;
+  min-width: 150px;
+}
 </style>
