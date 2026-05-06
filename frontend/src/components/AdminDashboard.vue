@@ -55,6 +55,7 @@ const filters = ref({
 
 const parsePostgresArray = (str) => {
   if (!str) return []
+  if (Array.isArray(str)) return str
   let trimmed = str.trim()
   if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
     trimmed = trimmed.slice(1, -1)

@@ -1,6 +1,3 @@
-import { config } from 'dotenv';
-config();
-
 import express from 'express';
 import submit from './api/submit.js';
 import inzendingen from './api/inzendingen.js';

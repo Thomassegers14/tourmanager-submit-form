@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "scripts": {
-    "dev:api": "node dev-api.js",
+    "dev:api": "node --env-file=.env dev-api.js",
     "dev:frontend": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build"
   },
