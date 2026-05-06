@@ -118,7 +118,7 @@ const formatTime = (datumStr) => {
 
 onMounted(async () => {
   try {
-    const res = await fetch('https://tourmanager-submit-form.onrender.com/inzendingen')
+    const res = await fetch('/api/inzendingen')
     const data = await res.json()
     data.forEach(item => {
       item.rider_names_parsed = parsePostgresArray(item.rider_names)

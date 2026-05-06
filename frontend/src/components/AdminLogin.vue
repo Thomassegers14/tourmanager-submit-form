@@ -19,7 +19,7 @@ const emit = defineEmits(['login-success'])
 
 const checkPassword = async () => {
   try {
-    const res = await fetch('https://tourmanager-submit-form.onrender.com/admin-login', {
+    const res = await fetch('/api/admin-login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: password.value })
