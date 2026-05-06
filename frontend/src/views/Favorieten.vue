@@ -177,7 +177,7 @@ onMounted(() => {
   updateWidth()
   window.addEventListener("resize", updateWidth)
 
-  fetchStartlist('vuelta-a-espana', 2025)
+  fetchStartlist('giro-d-italia', 2026)
 
   stepRefs.value.forEach((el, index) => {
     if (!el) return
