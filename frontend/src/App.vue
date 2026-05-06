@@ -9,6 +9,7 @@
     ></Countdown>
   <router-view />
   <AppFooter />
+  <Analytics />
 </template>
 
 <script setup>
@@ -17,6 +18,7 @@ import Navbar from './components/navbar.vue';
 import Countdown from './components/Countdown.vue';
 import AppFooter from './components/Footer.vue'
 import { EVENT_DEADLINE } from './config/event.js'
+import { Analytics } from '@vercel/analytics/vue'
 
 const deadline = EVENT_DEADLINE
 </script>

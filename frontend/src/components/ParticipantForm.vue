@@ -91,7 +91,7 @@
               <div class="rider-info">
                 <p class="rider-name">{{ formatRiderName(renner.rider_name) }}</p>
                 <span v-if="Number(renner.fav_points) > 0" class="badge badge-outline">
-                  {{ renner.fav_points }}pt
+                  {{ Number(renner.fav_points) }}pt
                 </span>
               </div>
               <span class="checkbox-wrapper">
