@@ -123,7 +123,7 @@ const handleResize = () => {
 onMounted(() => {
   handleResize()
   window.addEventListener('resize', handleResize)
-  fetchStartlist("vuelta-a-espana", 2025)
+  fetchStartlist("giro-d-italia", 2026)
 })
 
 onBeforeUnmount(() => {

@@ -18,5 +18,5 @@ import DeelnemerForm from '../components/ParticipantForm.vue'
 
 const maxPoints = 10
 const maxRenners = 12
-const eventName = 'Vuelta a España-2025'
+const eventName = 'Giro d\'Italia-2026'
 </script>
