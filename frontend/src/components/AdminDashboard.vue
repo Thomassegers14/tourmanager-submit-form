@@ -121,6 +121,7 @@ onMounted(async () => {
   try {
     const res = await fetch('/api/inzendingen')
     const data = await res.json()
+    if (!Array.isArray(data)) throw new Error(data.error ?? JSON.stringify(data))
     data.forEach(item => {
       item.rider_names_parsed = parsePostgresArray(item.rider_names)
     })
