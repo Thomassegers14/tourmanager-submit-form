@@ -11,5 +11,10 @@ export default defineConfig({
       }
     }
   },
-  publicDir: 'public'  // dit is default, maar expliciet zetten kan helpen
+  publicDir: 'public',
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3001'
+    }
+  }
 })
