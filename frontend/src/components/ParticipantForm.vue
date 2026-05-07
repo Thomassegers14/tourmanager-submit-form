@@ -71,8 +71,13 @@
         </select>
       </div>
 
+      <!-- Startlist laden -->
+      <div v-if="startlist.length === 0" class="startlist-loading">
+        <p>Startlist laden...</p>
+      </div>
+
       <!-- Grid van teams en renners -->
-      <div class="teams-grid">
+      <div v-else class="teams-grid">
         <div v-for="(renners, team) in filteredGroupedRenners" :key="team" class="team-column">
           <h6 class="team-name">
             {{ team.replace(/\s*\([^)]*\)/g, "").trim() }}
@@ -534,6 +539,14 @@ const submitForm = async () => {
   }
 }
 
+
+.startlist-loading {
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+}
 
 .rider-filters {
   display: flex;
