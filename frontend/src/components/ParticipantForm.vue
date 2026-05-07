@@ -1,5 +1,19 @@
 <template>
-  <form @submit.prevent="submitForm">
+  <!-- Bevestigingsscherm -->
+  <div v-if="submitted" class="confirmation">
+    <div class="confirmation-icon">✓</div>
+    <h2>Inzending verstuurd!</h2>
+    <p class="confirmation-name">{{ submittedData.voornaam }} {{ submittedData.achternaam }}</p>
+    <p class="confirmation-sub">{{ submittedData.riders.length }} renners — {{ submittedData.totalPoints }} / {{ maxPoints }} punten gebruikt</p>
+    <ul class="confirmation-riders">
+      <li v-for="r in submittedData.riders" :key="r.rider_id" class="confirmation-rider">
+        <span>{{ formatRiderName(r.rider_name) }}</span>
+        <span v-if="Number(r.fav_points) > 0" class="badge badge-outline">{{ Number(r.fav_points) }}pt</span>
+      </li>
+    </ul>
+  </div>
+
+  <form v-else @submit.prevent="submitForm">
 
     <section>
       <h2 class="section-title">Persoonlijke gegevens</h2>
@@ -148,6 +162,9 @@ onBeforeUnmount(() => {
 })
 
 
+const submitted = ref(false)
+const submittedData = ref({ voornaam: '', achternaam: '', riders: [], totalPoints: 0 })
+
 const form = ref({
   voornaam: '',
   achternaam: '',
@@ -282,13 +299,13 @@ const submitForm = async () => {
 
     if (!res.ok) throw new Error('Fout bij verzenden')
 
-    alert('Inzending verstuurd!')
-    form.value = {
-      voornaam: '',
-      achternaam: '',
-      email: '',
-      selectie: []
+    submittedData.value = {
+      voornaam: payload.voornaam,
+      achternaam: payload.achternaam,
+      riders: selectedRiders.value.map(r => ({ rider_id: r.rider_id, rider_name: r.rider_name, fav_points: r.fav_points })),
+      totalPoints: totalPoints.value
     }
+    submitted.value = true
   } catch (err) {
     console.error(err)
     alert('Er is iets misgelopen bij het verzenden.')
@@ -539,6 +556,54 @@ const submitForm = async () => {
   }
 }
 
+
+.confirmation {
+  max-width: 480px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+.confirmation-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.confirmation-name {
+  font-weight: var(--font-weight-medium);
+  font-size: 1.1rem;
+  margin: 0.25rem 0;
+}
+
+.confirmation-sub {
+  color: var(--muted-foreground);
+  font-size: var(--text-sm);
+  margin-bottom: 1.5rem;
+}
+
+.confirmation-riders {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  border-top: 1px solid var(--border);
+}
+
+.confirmation-rider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-sm);
+}
 
 .startlist-loading {
   min-height: 600px;
