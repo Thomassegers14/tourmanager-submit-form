@@ -5,7 +5,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { voornaam, achternaam, email, selectie } = req.body;
+  const { voornaam, achternaam, email, event_id, event_year, selectie } = req.body;
 
   if (!Array.isArray(selectie)) {
     return res.status(400).json({ error: 'Ongeldige selectie' });
@@ -16,9 +16,9 @@ export default async function handler(req, res) {
 
   try {
     await pool.query(
-      `INSERT INTO inzendingen (voornaam, achternaam, email, rider_ids, rider_names, tijdstip)
-       VALUES ($1, $2, $3, $4, $5, NOW())`,
-      [voornaam, achternaam, email, rider_ids, rider_names]
+      `INSERT INTO inzendingen (voornaam, achternaam, email, event_id, event_year, rider_ids, rider_names, tijdstip)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
+      [voornaam, achternaam, email, event_id, event_year, rider_ids, rider_names]
     );
     res.status(200).json({ message: 'Inzending opgeslagen' });
   } catch (err) {

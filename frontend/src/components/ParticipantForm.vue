@@ -133,6 +133,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Users, Send, Eclipse } from 'lucide-vue-next'
 import { useStartlist } from '../data/getStartlist.js';
+import { useFormState } from '../data/useFormState.js';
 import { EVENT_ID, EVENT_YEAR } from '../config/event.js'
 
 const { startlist, fetchStartlist } = useStartlist();
@@ -162,15 +163,7 @@ onBeforeUnmount(() => {
 })
 
 
-const submitted = ref(false)
-const submittedData = ref({ voornaam: '', achternaam: '', riders: [], totalPoints: 0 })
-
-const form = ref({
-  voornaam: '',
-  achternaam: '',
-  email: '',
-  selectie: []
-})
+const { form, submitted, submittedData } = useFormState()
 
 const selectedRiders = computed(() =>
   startlist.value.filter(r => form.value.selectie.includes(r.rider_id))
@@ -284,6 +277,8 @@ const submitForm = async () => {
     voornaam: form.value.voornaam,
     achternaam: form.value.achternaam,
     email: form.value.email,
+    event_id: EVENT_ID,
+    event_year: EVENT_YEAR,
     selectie: selectedRiders.value.map(r => ({
       rider_id: r.rider_id,
       rider_name: r.rider_name
