@@ -95,6 +95,14 @@
         <div v-for="(renners, team) in filteredGroupedRenners" :key="team" class="team-column">
           <h6 class="team-name">
             {{ team.replace(/\s*\([^)]*\)/g, "").trim() }}
+            <span class="roster-status"
+              :class="getTeamStats(team).rosterConfirmed ? 'roster-final' : 'roster-provisional'"
+              :title="getTeamStats(team).rosterConfirmed
+                ? 'Ploegselectie is definitief op ProCyclingStats'
+                : 'Ploegselectie is nog voorlopig op ProCyclingStats'">
+              <CircleCheck v-if="getTeamStats(team).rosterConfirmed" class="roster-icon" />
+              <Clock v-else class="roster-icon" />
+            </span>
           </h6>
           <p class="team-stats">
             <Users class="icon icon-s" />{{ getTeamStats(team).totalRiders }} renners –
@@ -131,7 +139,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { Users, Send, Eclipse } from 'lucide-vue-next'
+import { Users, Send, Eclipse, CircleCheck, Clock } from 'lucide-vue-next'
 import { useStartlist } from '../data/getStartlist.js';
 import { useFormState } from '../data/useFormState.js';
 import { EVENT_ID, EVENT_YEAR } from '../config/event.js'
@@ -212,10 +220,15 @@ const getTeamStats = (teamName) => {
   const totalPoints = teamRiders.reduce((sum, r) => sum + Number(r.fav_points), 0)
   const selectedPoints = selected.reduce((sum, r) => sum + Number(r.fav_points), 0)
 
+  // PCS-status van de ploegselectie (uit de scraper): definitief vs voorlopig
+  const rosterConfirmed =
+    String(teamRiders[0]?.roster_confirmed).toLowerCase() === 'true'
+
   return {
     totalRiders: teamRiders.length,
     selectedPoints,
     totalPoints,
+    rosterConfirmed,
   }
 }
 
@@ -415,6 +428,28 @@ const submitForm = async () => {
   margin: 0;
   border-top: 1px solid var(--primary);
   padding-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.roster-status {
+  display: inline-flex;
+  align-items: center;
+}
+
+.roster-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.roster-final {
+  color: #1FA8C9;
+}
+
+.roster-provisional {
+  color: #FF9800;
 }
 
 .team-stats {
