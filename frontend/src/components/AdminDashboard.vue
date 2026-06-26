@@ -44,6 +44,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { EVENT_ID, EVENT_YEAR } from '../config/event.js'
 const inzendingen = ref([])
 const expandedId = ref(null)
 const filters = ref({
@@ -119,7 +120,7 @@ const formatTime = (datumStr) => {
 
 onMounted(async () => {
   try {
-    const res = await fetch('/api/inzendingen')
+    const res = await fetch(`/api/inzendingen?event=${EVENT_ID}&year=${EVENT_YEAR}`)
     const data = await res.json()
     if (!Array.isArray(data)) throw new Error(data.error ?? JSON.stringify(data))
     data.forEach(item => {
