@@ -2,13 +2,10 @@
   <h1>Methodologie <span class="grey">favorieten en tiers</span></h1>
   <p class="intro">
     De favorieten voor deze koers zijn een handmatig samengestelde lijst, ingedeeld in tiers
-    met een waarde van 5, 3, 2 of 1 punt. De onderliggende profielscore-berekening en grafieken
-    zijn momenteel <strong>tijdelijk verborgen</strong>.
+    met een waarde van 5, 3, 2 of 1 punt. De grafiek hieronder toont de onderliggende scores per renner;
+    de uitgebreide toelichting bij de profielscore-berekening is momenteel <strong>tijdelijk verborgen</strong>.
   </p>
 
-  <!-- TIJDELIJK weggelaten: profielscore-berekening + grafieken (dumbbell & scrollytelling).
-       Zet de v-if hieronder terug op true om alles te herstellen. -->
-  <template v-if="false">
   <!-- Sorteer controls -->
   <div class="controls">
     <label for="sort-select">Sorteer op</label>
@@ -33,6 +30,9 @@
     />
   </div>
 
+  <!-- TIJDELIJK weggelaten: profielscore-toelichting (formules) + scrollytelling-scatter.
+       Zet de v-if hieronder terug op true om te herstellen. -->
+  <template v-if="false">
   <section>
     <h3 class="section-title">Profielscores</h3>
     <ul>
