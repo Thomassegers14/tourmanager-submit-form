@@ -17,7 +17,7 @@
                 <h3>Favorieten</h3>
                 <p>
                     Er is een Lijst Der Favorieten om gelijke teams te vermijden.
-                    Elke favoriet heeft een waarde van 1, 3 of 6 punten.
+                    Elke favoriet heeft een waarde van 1, 2, 3 of 5 punten.
                     Maximaal {{ maxPoints }} punten aan favorieten zijn toegestaan.
                 </p>
             </div>

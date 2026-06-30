@@ -1,11 +1,14 @@
 <template>
   <h1>Methodologie <span class="grey">favorieten en tiers</span></h1>
   <p class="intro">
-    Voor elke koers wordt een score berekend die
-    verschillende prestatie-indicatoren afkomstig van renners samenbrengt.
-    Deze indicatoren worden berekend aan de hand van Procyclingstats-data.
+    De favorieten voor deze koers zijn een handmatig samengestelde lijst, ingedeeld in tiers
+    met een waarde van 5, 3, 2 of 1 punt. De onderliggende profielscore-berekening en grafieken
+    zijn momenteel <strong>tijdelijk verborgen</strong>.
   </p>
 
+  <!-- TIJDELIJK weggelaten: profielscore-berekening + grafieken (dumbbell & scrollytelling).
+       Zet de v-if hieronder terug op true om alles te herstellen. -->
+  <template v-if="false">
   <!-- Sorteer controls -->
   <div class="controls">
     <label for="sort-select">Sorteer op</label>
@@ -89,20 +92,26 @@
     </div>
 
   </section>
+  </template>
+  <!-- EINDE tijdelijk weggelaten blok -->
 
   <section>
     <h3 class="section-title">Selectie en tiers</h3>
     <p>
-      Voor elke koers worden de <strong>top 15</strong> renners op <code>combined_score</code> geselecteerd en ingedeeld
-      in drie tiers:
+      De favorieten zijn ingedeeld in <strong>vier tiers</strong>. In je ploeg van 12 renners mag je
+      samen <strong>maximaal 10 favorietenpunten</strong> gebruiken:
     </p>
     <ul>
-      <li><span class="badge badge-outline">6 punten</span>&emsp;<strong>Tier 1</strong>: 2–3 absolute topfavorieten.</li>
+      <li><span class="badge badge-outline">5 punten</span>&emsp;<strong>Tier 1</strong>: dé topfavoriet.</li>
       <li><span class="badge badge-outline">3 punten</span>&emsp;<strong>Tier 2</strong>: directe uitdagers.</li>
-      <li><span class="badge badge-outline">1 punt</span>&emsp;<strong>Tier 3</strong>: overige kanshebbers binnen de top 15.</li>
+      <li><span class="badge badge-outline">2 punten</span>&emsp;<strong>Tier 3</strong>: subtop en klassementsoutsiders.</li>
+      <li><span class="badge badge-outline">1 punt</span>&emsp;<strong>Tier 4</strong>: overige kanshebbers.</li>
     </ul>
   </section>
 
+  <!-- TIJDELIJK weggelaten: Teamregel beschrijft de automatische tier-dedup van het
+       algoritme, die onder de handmatige favorietenlijst niet actief is. -->
+  <template v-if="false">
   <section>
     <h3 class="section-title">Teamregel</h3>
     <p>
@@ -111,6 +120,7 @@
       anderen naar Tier&nbsp;2 verplaatst.
     </p>
   </section>
+  </template>
 </template>
 
 <script setup>
