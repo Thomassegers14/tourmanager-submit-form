@@ -3,7 +3,6 @@
   <p class="intro">
     De favorieten voor deze koers zijn een handmatig samengestelde lijst, ingedeeld in tiers
     met een waarde van 5, 3, 2 of 1 punt. De grafiek hieronder toont de onderliggende scores per renner;
-    de uitgebreide toelichting bij de profielscore-berekening is momenteel <strong>tijdelijk verborgen</strong>.
   </p>
 
   <!-- Sorteer controls -->
